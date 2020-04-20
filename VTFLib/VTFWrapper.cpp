@@ -115,12 +115,10 @@ VTFLIB_API vlVoid vlImageCreateDefaultCreateStructure(SVTFCreateOptions *VTFCrea
 
 	VTFCreateOptions->bMipmaps = vlTrue;
 	VTFCreateOptions->MipmapFilter = MIPMAP_FILTER_BOX;
-	VTFCreateOptions->MipmapSharpenFilter = SHARPEN_FILTER_NONE;
 
 	VTFCreateOptions->bResize = vlFalse;
 	VTFCreateOptions->ResizeMethod = RESIZE_NEAREST_POWER2;
-	VTFCreateOptions->ResizeFilter = MIPMAP_FILTER_TRIANGLE;
-	VTFCreateOptions->ResizeSharpenFilter = SHARPEN_FILTER_NONE;
+	VTFCreateOptions->ResizeFilter = RESIZE_FILTER_TRIANGLE;
 	VTFCreateOptions->uiResizeWidth = 0;
 	VTFCreateOptions->uiResizeHeight = 0;
 
@@ -135,15 +133,9 @@ VTFLIB_API vlVoid vlImageCreateDefaultCreateStructure(SVTFCreateOptions *VTFCrea
 	VTFCreateOptions->sGammaCorrection = 2.0f;
 
 	VTFCreateOptions->bNormalMap = vlFalse;
-	VTFCreateOptions->KernelFilter = KERNEL_FILTER_3X3;
 	VTFCreateOptions->HeightConversionMethod = HEIGHT_CONVERSION_METHOD_AVERAGE_RGB;
 	VTFCreateOptions->NormalAlphaResult = NORMAL_ALPHA_RESULT_WHITE;
-	VTFCreateOptions->bNormalMinimumZ = 0;
-	VTFCreateOptions->sNormalScale = 2.0f;
 	VTFCreateOptions->bNormalWrap = vlFalse;
-	VTFCreateOptions->bNormalInvertX = vlFalse;
-	VTFCreateOptions->bNormalInvertY = vlFalse;
-	VTFCreateOptions->bNormalInvertZ = vlFalse;
 
 	VTFCreateOptions->bSphereMap = vlTrue;
 }
@@ -546,20 +538,20 @@ VTFLIB_API vlVoid *vlImageSetResourceData(vlUInt uiType, vlUInt uiSize, vlVoid *
 	return Image->SetResourceData(uiType, uiSize, lpData);
 }
 
-VTFLIB_API vlBool vlImageGenerateMipmaps(vlUInt uiFace, vlUInt uiFrame, VTFMipmapFilter MipmapFilter, VTFSharpenFilter SharpenFilter)
+VTFLIB_API vlBool vlImageGenerateMipmaps(vlUInt uiFace, vlUInt uiFrame, VTFMipmapFilter MipmapFilter)
 {
 	if(Image == 0)
 		return vlFalse;
 
-	return Image->GenerateMipmaps(uiFace, uiFrame, MipmapFilter, SharpenFilter);
+	return Image->GenerateMipmaps(uiFace, uiFrame, MipmapFilter);
 }
 
-VTFLIB_API vlBool vlImageGenerateAllMipmaps(VTFMipmapFilter MipmapFilter, VTFSharpenFilter SharpenFilter)
+VTFLIB_API vlBool vlImageGenerateAllMipmaps(VTFMipmapFilter MipmapFilter)
 {
 	if(Image == 0)
 		return vlFalse;
 
-	return Image->GenerateMipmaps(MipmapFilter, SharpenFilter);
+	return Image->GenerateMipmaps(MipmapFilter);
 }
 
 VTFLIB_API vlBool vlImageGenerateThumbnail()
@@ -570,20 +562,20 @@ VTFLIB_API vlBool vlImageGenerateThumbnail()
 	return Image->GenerateThumbnail();
 }
 
-VTFLIB_API vlBool vlImageGenerateNormalMap(vlUInt uiFrame, VTFKernelFilter KernelFilter, VTFHeightConversionMethod HeightConversionMethod, VTFNormalAlphaResult NormalAlphaResult)
+VTFLIB_API vlBool vlImageGenerateNormalMap(vlUInt uiFrame, VTFHeightConversionMethod HeightConversionMethod, VTFNormalAlphaResult NormalAlphaResult)
 {
 	if(Image == 0)
 		return vlFalse;
 
-	return Image->GenerateNormalMap(uiFrame, KernelFilter, HeightConversionMethod, NormalAlphaResult);
+	return Image->GenerateNormalMap(uiFrame, HeightConversionMethod, NormalAlphaResult);
 }
 
-VTFLIB_API vlBool vlImageGenerateAllNormalMaps(VTFKernelFilter KernelFilter, VTFHeightConversionMethod HeightConversionMethod, VTFNormalAlphaResult NormalAlphaResult)
+VTFLIB_API vlBool vlImageGenerateAllNormalMaps(VTFHeightConversionMethod HeightConversionMethod, VTFNormalAlphaResult NormalAlphaResult)
 {
 	if(Image == 0)
 		return vlFalse;
 
-	return Image->GenerateNormalMap(KernelFilter, HeightConversionMethod, NormalAlphaResult);
+	return Image->GenerateNormalMap(HeightConversionMethod, NormalAlphaResult);
 }
 
 VTFLIB_API vlBool vlImageGenerateSphereMap()
@@ -653,14 +645,14 @@ VTFLIB_API vlBool vlImageConvert(vlByte *lpSource, vlByte *lpDest, vlUInt uiWidt
 	return CVTFFile::Convert(lpSource, lpDest, uiWidth, uiHeight, SourceFormat, DestFormat);
 }
 
-VTFLIB_API vlBool vlImageConvertToNormalMap(vlByte *lpSourceRGBA8888, vlByte *lpDestRGBA8888, vlUInt uiWidth, vlUInt uiHeight, VTFKernelFilter KernelFilter, VTFHeightConversionMethod HeightConversionMethod, VTFNormalAlphaResult NormalAlphaResult, vlByte bMinimumZ, vlSingle sScale, vlBool bWrap, vlBool bInvertX, vlBool bInvertY)
+VTFLIB_API vlBool vlImageConvertToNormalMap(vlByte *lpSourceRGBA8888, vlByte *lpDestRGBA8888, vlUInt uiWidth, vlUInt uiHeight, VTFHeightConversionMethod HeightConversionMethod, VTFNormalAlphaResult NormalAlphaResult, vlBool bWrap)
 {
-	return CVTFFile::ConvertToNormalMap(lpSourceRGBA8888, lpDestRGBA8888, uiWidth, uiHeight, KernelFilter, HeightConversionMethod, NormalAlphaResult, bMinimumZ, sScale, bWrap, bInvertX, bInvertY);
+	return CVTFFile::ConvertToNormalMap(lpSourceRGBA8888, lpDestRGBA8888, uiWidth, uiHeight, HeightConversionMethod, NormalAlphaResult, bWrap);
 }
 
-VTFLIB_API vlBool vlImageResize(vlByte *lpSourceRGBA8888, vlByte *lpDestRGBA8888, vlUInt uiSourceWidth, vlUInt uiSourceHeight, vlUInt uiDestWidth, vlUInt uiDestHeight, VTFMipmapFilter ResizeFilter, VTFSharpenFilter SharpenFilter)
+VTFLIB_API vlBool vlImageResize(vlByte *lpSourceRGBA8888, vlByte *lpDestRGBA8888, vlUInt uiSourceWidth, vlUInt uiSourceHeight, vlUInt uiDestWidth, vlUInt uiDestHeight, VTFResizeFilter ResizeFilter)
 {
-	return CVTFFile::Resize(lpSourceRGBA8888, lpDestRGBA8888, uiSourceWidth, uiSourceHeight, uiDestWidth, uiDestHeight, ResizeFilter, SharpenFilter);
+	return CVTFFile::Resize(lpSourceRGBA8888, lpDestRGBA8888, uiSourceWidth, uiSourceHeight, uiDestWidth, uiDestHeight, ResizeFilter);
 }
 
 VTFLIB_API vlVoid vlImageCorrectImageGamma(vlByte *lpImageDataRGBA8888, vlUInt uiWidth, vlUInt uiHeight, vlSingle sGammaCorrection)

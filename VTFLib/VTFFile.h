@@ -70,15 +70,13 @@ typedef struct tagSVTFCreateOptions
 
 	vlBool bMipmaps;									//!< Generate MIPmaps. (Space is always allocated.)
 	VTFMipmapFilter MipmapFilter;						//!< MIP map re-size filter.
-	VTFSharpenFilter MipmapSharpenFilter;				//!< MIP map sharpen filter.
 
 	vlBool bThumbnail;									//!< Generate thumbnail image.
 	vlBool bReflectivity;								//!< Compute image reflectivity.
 
 	vlBool bResize;										//!< Resize the input image.
 	VTFResizeMethod ResizeMethod;						//!< New size compution method.
-	VTFMipmapFilter ResizeFilter;						//!< Re-size filter.
-	VTFSharpenFilter ResizeSharpenFilter;				//!< Sharpen filter.
+	VTFResizeFilter ResizeFilter;						//!< Re-size filter.
 	vlUInt uiResizeWidth;								//!< New width after re-size if method is RESIZE_SET.
 	vlUInt uiResizeHeight;								//!< New height after re-size if method is RESIZE_SET.
 
@@ -90,15 +88,9 @@ typedef struct tagSVTFCreateOptions
 	vlSingle sGammaCorrection;							//!< Gamma correction to apply.
 
 	vlBool bNormalMap;									//!< Convert input image to a normal map.
-	VTFKernelFilter KernelFilter;						//!< Normal map generation kernel.
 	VTFHeightConversionMethod HeightConversionMethod;	//!< Method or determining height from input image during normal map creation.
 	VTFNormalAlphaResult NormalAlphaResult;				//!< How to handle output image alpha channel, post normal map creation.
-	vlByte bNormalMinimumZ;								//!< Minimum normal Z value.
-	vlSingle sNormalScale;								//!< Normal map scale.
 	vlBool bNormalWrap;									//!< Wrap the normal map.
-	vlBool bNormalInvertX;								//!< Invert the normal X component.
-	vlBool bNormalInvertY;								//!< Invert the normal Y component.
-	vlBool bNormalInvertZ;								//!< Invert the normal Z component.
 
 	vlBool bSphereMap;									//!< Generate a sphere map for six faced environment maps.
 } SVTFCreateOptions;
@@ -481,7 +473,7 @@ namespace VTFLib
 			\param SharpenFilter is the sharpening filter to use (default none).
 			\return true on sucessful creation, otherwise false.
 		*/
-		vlBool GenerateMipmaps(VTFMipmapFilter MipmapFilter = MIPMAP_FILTER_BOX, VTFSharpenFilter SharpenFilter = SHARPEN_FILTER_NONE);
+		vlBool GenerateMipmaps(VTFMipmapFilter MipmapFilter = MIPMAP_FILTER_BOX);
 
 		//! Generate MIP maps from a specific face and frame.
 		/*!
@@ -497,7 +489,7 @@ namespace VTFLib
 			for the first face. Cubemaps have 6 faces, others only 1.
 			\return true on sucessful creation, otherwise false.
 		*/
-		vlBool GenerateMipmaps(vlUInt uiFace, vlUInt uiFrame, VTFMipmapFilter MipmapFilter = MIPMAP_FILTER_BOX, VTFSharpenFilter SharpenFilter = SHARPEN_FILTER_NONE);
+		vlBool GenerateMipmaps(vlUInt uiFace, vlUInt uiFrame, VTFMipmapFilter MipmapFilter = MIPMAP_FILTER_BOX);
 
 		//! Generate a thumbnail image.
 		/*!
@@ -520,7 +512,7 @@ namespace VTFLib
 			\return true on sucessful creation, otherwise false.
 			\note  The options for conversion are the same used in the nVidea NormalMap Photoshop plug-in.
 		*/
-		vlBool GenerateNormalMap(VTFKernelFilter KernelFilter = KERNEL_FILTER_3X3, VTFHeightConversionMethod HeightConversionMethod = HEIGHT_CONVERSION_METHOD_AVERAGE_RGB, VTFNormalAlphaResult NormalAlphaResult = NORMAL_ALPHA_RESULT_WHITE);
+		vlBool GenerateNormalMap(VTFHeightConversionMethod HeightConversionMethod = HEIGHT_CONVERSION_METHOD_AVERAGE_RGB, VTFNormalAlphaResult NormalAlphaResult = NORMAL_ALPHA_RESULT_WHITE);
 		
 		//! Convert image to a normal map from a specific frame.
 		/*!
@@ -534,7 +526,7 @@ namespace VTFLib
 			\return true on sucessful creation, otherwise false.
 			\note  The options for conversion are the same used in the nVidea NormalMap Photoshop plug-in.
 		*/
-		vlBool GenerateNormalMap(vlUInt uiFrame, VTFKernelFilter KernelFilter = KERNEL_FILTER_3X3, VTFHeightConversionMethod HeightConversionMethod = HEIGHT_CONVERSION_METHOD_AVERAGE_RGB, VTFNormalAlphaResult NormalAlphaResult = NORMAL_ALPHA_RESULT_WHITE);
+		vlBool GenerateNormalMap(vlUInt uiFrame, VTFHeightConversionMethod HeightConversionMethod = HEIGHT_CONVERSION_METHOD_AVERAGE_RGB, VTFNormalAlphaResult NormalAlphaResult = NORMAL_ALPHA_RESULT_WHITE);
 
 		vlBool GenerateSphereMap();		//!< Creates a spheremap from using the 6 faces of the image making up its cubemap.
 
@@ -688,7 +680,7 @@ namespace VTFLib
 			\param bInvertY sets if the normal map should be flipped along its Y axis (default false).
 			\return true on sucessful conversion, otherwise false.
 		*/
-		static vlBool ConvertToNormalMap(vlByte *lpSourceRGBA8888, vlByte *lpDestRGBA8888, vlUInt uiWidth, vlUInt uiHeight, VTFKernelFilter KernelFilter = KERNEL_FILTER_3X3, VTFHeightConversionMethod HeightConversionMethod = HEIGHT_CONVERSION_METHOD_AVERAGE_RGB, VTFNormalAlphaResult NormalAlphaResult = NORMAL_ALPHA_RESULT_WHITE, vlByte bMinimumZ = 0, vlSingle sScale = 2.0f, vlBool bWrap = vlFalse, vlBool bInvertX = vlFalse, vlBool bInvertY = vlFalse, vlBool bInvertZ = vlFalse);
+		static vlBool ConvertToNormalMap(vlByte *lpSourceRGBA8888, vlByte *lpDestRGBA8888, vlUInt uiWidth, vlUInt uiHeight, VTFHeightConversionMethod HeightConversionMethod = HEIGHT_CONVERSION_METHOD_AVERAGE_RGB, VTFNormalAlphaResult NormalAlphaResult = NORMAL_ALPHA_RESULT_WHITE, vlBool bWrap = vlFalse);
 
 		//! Re-sizes an image.
 		/*!
@@ -704,7 +696,7 @@ namespace VTFLib
 			\param SharpenFilter is the image sharpening filter to use (default none).
 			\return true on sucessful re-size, otherwise false.
 		*/
-		static vlBool Resize(vlByte *lpSourceRGBA8888, vlByte *lpDestRGBA8888, vlUInt uiSourceWidth, vlUInt uiSourceHeight, vlUInt uiDestWidth, vlUInt uiDestHeight, VTFMipmapFilter ResizeFilter = MIPMAP_FILTER_TRIANGLE, VTFSharpenFilter SharpenFilter = SHARPEN_FILTER_NONE);
+		static vlBool Resize(vlByte *lpSourceRGBA8888, vlByte *lpDestRGBA8888, vlUInt uiSourceWidth, vlUInt uiSourceHeight, vlUInt uiDestWidth, vlUInt uiDestHeight, VTFResizeFilter ResizeFilter = RESIZE_FILTER_TRIANGLE);
 
 	private:
 		

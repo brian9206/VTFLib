@@ -25,43 +25,43 @@
 #include "nvtt.h"
 #ifdef _M_AMD64
 	#ifdef _DEBUG
-		#pragma comment(lib, "../../VTFLib/lib/x64/debug/nvtt_d.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x64/debug/bc6h_d.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x64/debug/bc7_d.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x64/debug/nvcore_d.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x64/debug/nvimage_d.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x64/debug/nvmath_d.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x64/debug/nvthread_d.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x64/debug/squish_d.lib")
+		#pragma comment(lib, "../../../lib/x64/debug/nvtt_d.lib")
+		#pragma comment(lib, "../../../lib/x64/debug/bc6h_d.lib")
+		#pragma comment(lib, "../../../lib/x64/debug/bc7_d.lib")
+		#pragma comment(lib, "../../../lib/x64/debug/nvcore_d.lib")
+		#pragma comment(lib, "../../../lib/x64/debug/nvimage_d.lib")
+		#pragma comment(lib, "../../../lib/x64/debug/nvmath_d.lib")
+		#pragma comment(lib, "../../../lib/x64/debug/nvthread_d.lib")
+		#pragma comment(lib, "../../../lib/x64/debug/squish_d.lib")
 	#else
-		#pragma comment(lib, "../../VTFLib/lib/x64/debug/nvtt.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x64/debug/bc6h.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x64/debug/bc7.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x64/debug/nvcore.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x64/debug/nvimage.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x64/debug/nvmath.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x64/debug/nvthread.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x64/debug/squish.lib")
+		#pragma comment(lib, "../../../lib/x64/release/nvtt.lib")
+		#pragma comment(lib, "../../../lib/x64/release/bc6h.lib")
+		#pragma comment(lib, "../../../lib/x64/release/bc7.lib")
+		#pragma comment(lib, "../../../lib/x64/release/nvcore.lib")
+		#pragma comment(lib, "../../../lib/x64/release/nvimage.lib")
+		#pragma comment(lib, "../../../lib/x64/release/nvmath.lib")
+		#pragma comment(lib, "../../../lib/x64/release/nvthread.lib")
+		#pragma comment(lib, "../../../lib/x64/release/squish.lib")
 	#endif
 #else
 	#ifdef _DEBUG
-		#pragma comment(lib, "../../VTFLib/lib/x86/debug/nvtt_d.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x86/debug/bc6h_d.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x86/debug/bc7_d.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x86/debug/nvcore_d.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x86/debug/nvimage_d.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x86/debug/nvmath_d.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x86/debug/nvthread_d.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x86/debug/squish_d.lib")
+		#pragma comment(lib, "../../../lib/x86/debug/nvtt_d.lib")
+		#pragma comment(lib, "../../../lib/x86/debug/bc6h_d.lib")
+		#pragma comment(lib, "../../../lib/x86/debug/bc7_d.lib")
+		#pragma comment(lib, "../../../lib/x86/debug/nvcore_d.lib")
+		#pragma comment(lib, "../../../lib/x86/debug/nvimage_d.lib")
+		#pragma comment(lib, "../../../lib/x86/debug/nvmath_d.lib")
+		#pragma comment(lib, "../../../lib/x86/debug/nvthread_d.lib")
+		#pragma comment(lib, "../../../lib/x86/debug/squish_d.lib")
 	#else
-		#pragma comment(lib, "../../VTFLib/lib/x86/debug/nvtt.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x86/debug/bc6h.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x86/debug/bc7.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x86/debug/nvcore.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x86/debug/nvimage.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x86/debug/nvmath.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x86/debug/nvthread.lib")
-		#pragma comment(lib, "../../VTFLib/lib/x86/debug/squish.lib")
+		#pragma comment(lib, "../../../lib/x86/release/nvtt.lib")
+		#pragma comment(lib, "../../../lib/x86/release/bc6h.lib")
+		#pragma comment(lib, "../../../lib/x86/release/bc7.lib")
+		#pragma comment(lib, "../../../lib/x86/release/nvcore.lib")
+		#pragma comment(lib, "../../../lib/x86/release/nvimage.lib")
+		#pragma comment(lib, "../../../lib/x86/release/nvmath.lib")
+		#pragma comment(lib, "../../../lib/x86/release/nvthread.lib")
+		#pragma comment(lib, "../../../lib/x86/release/squish.lib")
 	#endif
 #endif
 #endif
@@ -4034,10 +4034,10 @@ vlBool CVTFFile::Resize(vlByte *lpSourceRGBA8888, vlByte *lpDestRGBA8888, vlUInt
 		for ( size_t i = 0; i < count; i++ )
 		{
 			Color& c = clr[i];
-			c.r = red[i] * 255.f;
-			c.g = green[i] * 255.f;
-			c.b = blue[i] * 255.f;
-			c.a = alpha[i] * 255.f;
+			c.r = static_cast<int>( red[i] * 255.f );
+			c.g = static_cast<int>( green[i] * 255.f );
+			c.b = static_cast<int>( blue[i] * 255.f );
+			c.a = static_cast<int>( alpha[i] * 255.f );
 		}
 	}
 

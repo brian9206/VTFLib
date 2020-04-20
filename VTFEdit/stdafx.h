@@ -34,29 +34,6 @@
 #include <tchar.h>
 #include <richedit.h>
 
-#include "..\lib\VTFLib.h"
-#ifdef _DEBUG
-#	ifdef _WIN64
-#		pragma comment(lib, "../VTFLib/x64/Debug/VTFLib.lib")
-#	else
-#		pragma comment(lib, "../VTFLib/Win32/Debug/VTFLib.lib")
-#	endif
-#else
-#	ifdef _WIN64
-#		pragma comment(lib, "../VTFLib/x64/Release/VTFLib.lib")
-#	else
-#		pragma comment(lib, "../VTFLib/Win32/Release/VTFLib.lib")
-#	endif
-#endif
-
-#include "..\lib\HLLib.h"
-#ifdef _WIN64
-#	pragma comment(lib, "..\\..\\..\\lib\\x64\\HLLib.lib")
-#else
-#	pragma comment(lib, "..\\..\\..\\lib\\x86\\HLLib.lib")
-#endif
-
-#include "IL\il.h"
 #pragma comment(lib, "DevIL.lib")
 
 #ifdef CreateDirectory

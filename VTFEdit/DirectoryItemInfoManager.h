@@ -39,16 +39,16 @@ namespace VTFEdit
 	[DllImport("Shell32.dll")]
 	extern int SHGetFileInfo(LPCTSTR pszPath, DWORD dwFileAttributes, SFileInfo *FileInfo, UINT cbFileInfo, UINT uFlags);
 
-	__gc class CDirectoryItemInfo
+	ref class CDirectoryItemInfo
 	{
 	private:
-		String *sType;
-		String *sDescription;
+		String^ sType;
+		String^ sDescription;
 
 		int iIconIndex;
 
 	public:
-		CDirectoryItemInfo(String *sType, String *sDescription, int iIconIndex)
+		CDirectoryItemInfo(String^ sType, String^ sDescription, int iIconIndex)
 		{
 			this->sType = sType;
 			this->sDescription = sDescription;
@@ -56,33 +56,33 @@ namespace VTFEdit
 			this->iIconIndex = iIconIndex;
 		}
 
-		__property String *get_Type()
+		property String^ Type
 		{
-			return this->sType;
+			String^ get() { return this->sType; }
 		}
 
-		__property String *get_Description()
+		property String^ Description
 		{
-			return this->sDescription;
+			String^ get() { return this->sDescription; }
 		}
 
-		__property int get_IconIndex()
+		property int IconIndex
 		{
-			return this->iIconIndex;
+			int get() { return this->iIconIndex; }
 		}
 	};
 
-	__gc class CDirectoryItemInfoManager
+	ref class CDirectoryItemInfoManager
 	{
 	private:
 		bool bFileMapping;
 		bool bVolatileAccess;
 
 	private:
-		System::Collections::Hashtable *oFileTypeInfoTable;
+		System::Collections::Hashtable^ oFileTypeInfoTable;
 
 	private:
-		System::Windows::Forms::ImageList *oSmallImageList;
+		System::Windows::Forms::ImageList^ oSmallImageList;
 
 	public:
 		CDirectoryItemInfoManager()
@@ -90,81 +90,73 @@ namespace VTFEdit
 			this->bFileMapping = true;
 			this->bVolatileAccess = true;
 
-			this->oFileTypeInfoTable = new System::Collections::Hashtable();
+			this->oFileTypeInfoTable = gcnew System::Collections::Hashtable();
 
-			this->oSmallImageList = new System::Windows::Forms::ImageList();
+			this->oSmallImageList = gcnew System::Windows::Forms::ImageList();
 			this->oSmallImageList->ImageSize = System::Drawing::Size(16, 16);
 			this->oSmallImageList->ColorDepth = System::Windows::Forms::ColorDepth::Depth32Bit;
 			this->oSmallImageList->TransparentColor = System::Drawing::Color::Transparent;
 		}
 
 	public:
-		__property bool get_FileMapping()
+		property bool FileMapping
 		{
-			return this->bFileMapping;
+			bool get() { return this->bFileMapping; }
+			void set(bool v) { this->bFileMapping = v; }
 		}
 
-		__property void set_FileMapping(bool bFileMapping)
+		property bool VolatileAccess
 		{
-			this->bFileMapping = bFileMapping;
-		}
-
-		__property bool get_VolatileAccess()
-		{
-			return this->bVolatileAccess;
-		}
-
-		__property void set_VolatileAccess(bool bVolatileAccess)
-		{
-			this->bVolatileAccess = bVolatileAccess;
+			bool get() { return this->bVolatileAccess; }
+			void set(bool v) { this->bVolatileAccess = v; }
 		}
 
 	public:
-		__property System::Windows::Forms::ImageList *get_SmallImageList()
+		property ImageList^ SmallImageList
 		{
-			return this->oSmallImageList;
+			ImageList^ get() { return this->oSmallImageList; }
 		}
 
 	public:
-		CDirectoryItemInfo *GetFileTypeInfo(String *sFile)
+		CDirectoryItemInfo^ GetFileTypeInfo(String^ sFile)
 		{
-			String *sFileType;
-			if(sFile->LastIndexOf(S".") != -1)
+			String^ sFileType;
+			if(sFile->LastIndexOf(".") != -1)
 			{
-				sFileType = sFile->Substring(sFile->LastIndexOf(S".") + 1)->ToUpper();
+				sFileType = sFile->Substring(sFile->LastIndexOf(".") + 1)->ToUpper();
 			}
 			else
 			{
-				sFileType = S"File";
+				sFileType = "File";
 			}
 
 			return this->GetItemTypeInfo(sFile, sFileType, FILE_ATTRIBUTE_NORMAL);
 		}
 
-		CDirectoryItemInfo *GetFolderTypeInfo(String *sFolder, String *sFolderType)
+		CDirectoryItemInfo^ GetFolderTypeInfo(String^ sFolder, String^ sFolderType)
 		{
 			return this->GetItemTypeInfo(sFolder, sFolderType, FILE_ATTRIBUTE_DIRECTORY);
 		}
 
-		CDirectoryItemInfo *GetFolderTypeInfo(String *sFolderType)
+		CDirectoryItemInfo^ GetFolderTypeInfo(String^ sFolderType)
 		{
-			return this->GetItemTypeInfo(S"Folder", sFolderType, FILE_ATTRIBUTE_DIRECTORY);
+			return this->GetItemTypeInfo("Folder", sFolderType, FILE_ATTRIBUTE_DIRECTORY);
 		}
 
 	private:
-		CDirectoryItemInfo *GetItemTypeInfo(String *sItemPath, String *sItemType, DWORD dwFileAttributes)
+		CDirectoryItemInfo^ GetItemTypeInfo(String^ sItemPath, String^ sItemType, DWORD dwFileAttributes)
 		{
 			//String *sFolderType = S"Folder";
 
-			Object *oValue = this->oFileTypeInfoTable->get_Item(sItemType);
-			if(oValue == 0)
+			Object^ oValue = this->oFileTypeInfoTable[sItemType];
+			if(oValue == nullptr)
 			{
 				SFileInfo FileInfo;
 
-				String *sDescription;
+				String^ sDescription;
 				int iIconIndex;
-				System::Drawing::Icon *oSmallIcon;
-				System::Drawing::Icon *oSmallIconOpen;
+				System::Drawing::Icon^ oSmallIcon;
+				System::Drawing::Icon^ oSmallIconOpen;
 
 				char *cItemPath = (char *)(System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(sItemPath)).ToPointer();
 
@@ -176,7 +168,7 @@ namespace VTFEdit
 				{
 					if(SHGetFileInfo(cItemPath, dwFileAttributes, &FileInfo, sizeof(FileInfo), eTypeName | eUseFileAttributes))
 					{
-						sDescription = new String(FileInfo.szTypeName);
+						sDescription = gcnew String(FileInfo.szTypeName);
 					}
 					else
 					{
@@ -185,7 +177,7 @@ namespace VTFEdit
 				}
 
 				SHGetFileInfo(cItemPath, dwFileAttributes, &FileInfo, sizeof(FileInfo), eIcon | eSmallIcon | eUseFileAttributes);
-				oSmallIcon = System::Drawing::Icon::FromHandle(FileInfo.hIcon);
+				oSmallIcon = System::Drawing::Icon::FromHandle((IntPtr)FileInfo.hIcon);
 
 				this->oSmallImageList->Images->Add(oSmallIcon);
 
@@ -195,7 +187,7 @@ namespace VTFEdit
 				{
 					if(SHGetFileInfo(cItemPath, dwFileAttributes, &FileInfo, sizeof(FileInfo), eIcon | eSmallIcon | eOpenIcon | eUseFileAttributes))
 					{
-						oSmallIconOpen = System::Drawing::Icon::FromHandle(FileInfo.hIcon);
+						oSmallIconOpen = System::Drawing::Icon::FromHandle((IntPtr)FileInfo.hIcon);
 					}
 					else
 					{
@@ -207,7 +199,7 @@ namespace VTFEdit
 
 				System::Runtime::InteropServices::Marshal::FreeHGlobal((IntPtr)cItemPath);
 
-				CDirectoryItemInfo *ItemTypeInfo = new CDirectoryItemInfo(sItemType, sDescription, iIconIndex);
+				CDirectoryItemInfo^ ItemTypeInfo = gcnew CDirectoryItemInfo(sItemType, sDescription, iIconIndex);
 
 				this->oFileTypeInfoTable->Add(sItemType, ItemTypeInfo);
 
@@ -215,7 +207,7 @@ namespace VTFEdit
 			}
 			else
 			{
-				return static_cast<CDirectoryItemInfo *>(oValue);
+				return static_cast<CDirectoryItemInfo^>(oValue);
 			}
 		}
 	};

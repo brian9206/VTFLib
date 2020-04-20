@@ -23,14 +23,17 @@
 #include "VTFOptions.h"
 #include "Utility.h"
 
+#include "VTFLib.h"
+#include "HLLib.h"
+
 using namespace System;
 
 namespace VTFEdit
 {
-	__gc class CVTFFileUtility
+	ref class CVTFFileUtility
 	{
 	public:
-		static SVTFCreateOptions GetCreateOptions(CVTFOptions *Options)
+		static SVTFCreateOptions GetCreateOptions(CVTFOptions^ Options)
 		{
 			SVTFCreateOptions VTFCreateOptions;
 
@@ -43,7 +46,7 @@ namespace VTFEdit
 					VTFCreateOptions.uiVersion[0] = Convert::ToUInt32(Options->Version->Substring(0, Options->Version->IndexOf('.')));
 					VTFCreateOptions.uiVersion[1] = Convert::ToUInt32(Options->Version->Substring(Options->Version->IndexOf('.') + 1));
 				}
-				catch(Exception *)
+				catch(Exception^)
 				{
 					VTFCreateOptions.uiVersion[0] = VTF_MAJOR_VERSION;
 					VTFCreateOptions.uiVersion[1] = VTF_MINOR_VERSION;
@@ -53,7 +56,6 @@ namespace VTFEdit
 			VTFCreateOptions.bResize = Options->ResizeImage;
 			VTFCreateOptions.ResizeMethod = Options->ResizeMethod;
 			VTFCreateOptions.ResizeFilter = Options->ResizeFilter;
-			VTFCreateOptions.ResizeSharpenFilter = Options->ResizeSharpenFilter;
 			VTFCreateOptions.bResizeClamp = Options->ResizeClamp;
 			VTFCreateOptions.uiResizeClampWidth = Options->ResizeClampWidth;
 			VTFCreateOptions.uiResizeClampHeight = Options->ResizeClampHeight;
@@ -61,12 +63,9 @@ namespace VTFEdit
 			VTFCreateOptions.sGammaCorrection = Options->GammaCorrection;
 			VTFCreateOptions.bMipmaps = Options->GenerateMipmaps;
 			VTFCreateOptions.MipmapFilter = Options->MipmapFilter;
-			VTFCreateOptions.MipmapSharpenFilter = Options->MipmapSharpenFilter;
 			VTFCreateOptions.bNormalMap = Options->ConvertToNormalMap;
-			VTFCreateOptions.KernelFilter = Options->KernelFilter;
 			VTFCreateOptions.HeightConversionMethod = Options->HeightConversionMethod;
 			VTFCreateOptions.NormalAlphaResult = Options->AlphaResult;
-			VTFCreateOptions.sNormalScale = Options->NormalScale;
 			VTFCreateOptions.bNormalWrap = Options->NormalWrap;
 			VTFCreateOptions.bThumbnail = Options->GenerateThumbnail;
 			VTFCreateOptions.bReflectivity = Options->ComputeReflectivity;
@@ -88,7 +87,7 @@ namespace VTFEdit
 			return VTFCreateOptions;
 		}
 
-		static bool CreateResources(CVTFOptions *Options, VTFLib::CVTFFile *pVTFFile)
+		static bool CreateResources(CVTFOptions^ Options, VTFLib::CVTFFile *pVTFFile)
 		{
 			bool bResult = true;
 
@@ -104,38 +103,38 @@ namespace VTFEdit
 
 			if(Options->CreateInformationResource)
 			{
-				char cTemp[8192];				
+				char cTemp[8192];
 				VTFLib::CVMTFile *pVMTFile = new VTFLib::CVMTFile();
 
 				pVMTFile->Create("Information");
 				if(Options->InformationAuthor->Length > 0)
 				{
-					CUtility::StringToCharPointer(Options->InformationAuthor, cTemp, sizeof(cTemp));
+					CUtility::StringToCharPointer(Options->InformationAuthor, cTemp);
 					pVMTFile->GetRoot()->AddStringNode("Author", cTemp);
 				}
 				if(Options->InformationContact->Length > 0)
 				{
-					CUtility::StringToCharPointer(Options->InformationContact, cTemp, sizeof(cTemp));
+					CUtility::StringToCharPointer(Options->InformationContact, cTemp);
 					pVMTFile->GetRoot()->AddStringNode("Contact", cTemp);
 				}
 				if(Options->InformationVersion->Length > 0)
 				{
-					CUtility::StringToCharPointer(Options->InformationVersion, cTemp, sizeof(cTemp));
+					CUtility::StringToCharPointer(Options->InformationVersion, cTemp);
 					pVMTFile->GetRoot()->AddStringNode("Version", cTemp);
 				}
 				if(Options->InformationModification->Length > 0)
 				{
-					CUtility::StringToCharPointer(Options->InformationModification, cTemp, sizeof(cTemp));
+					CUtility::StringToCharPointer(Options->InformationModification, cTemp);
 					pVMTFile->GetRoot()->AddStringNode("Modification", cTemp);
 				}
 				if(Options->InformationDescription->Length > 0)
 				{
-					CUtility::StringToCharPointer(Options->InformationDescription, cTemp, sizeof(cTemp));
+					CUtility::StringToCharPointer(Options->InformationDescription, cTemp);
 					pVMTFile->GetRoot()->AddStringNode("Description", cTemp);
 				}
 				if(Options->InformationComments->Length > 0)
 				{
-					CUtility::StringToCharPointer(Options->InformationComments, cTemp, sizeof(cTemp));
+					CUtility::StringToCharPointer(Options->InformationComments, cTemp);
 					pVMTFile->GetRoot()->AddStringNode("Comments", cTemp);
 				}
 

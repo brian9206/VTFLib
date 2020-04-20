@@ -25,17 +25,18 @@ using namespace System;
 
 namespace VTFEdit
 {
-	__gc class CUtility
+	ref class CUtility
 	{
 	public:
-		static void StringToCharPointer(String *sString, char *cString, int iLength)
+		template <size_t N>
+		static void StringToCharPointer(String^ sString, char (&cString)[N])
 		{
 			char *cTemp;
 
 			cTemp = (char *)(System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(sString)).ToPointer();
 
-			strncpy_s(cString, iLength, cTemp, iLength);
-			cString[iLength - 1]= '\0';
+			strcpy_s(cString, cTemp);
+			cString[N - 1]= '\0';
 
 			System::Runtime::InteropServices::Marshal::FreeHGlobal((IntPtr)cTemp);
 		}

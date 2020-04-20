@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -18,84 +18,24 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\..\VTFLib\Error.cpp" />
-    <ClCompile Include="..\..\..\VTFLib\FileReader.cpp" />
-    <ClCompile Include="..\..\..\VTFLib\FileWriter.cpp" />
-    <ClCompile Include="..\..\..\VTFLib\Float16.cpp" />
-    <ClCompile Include="..\..\..\VTFLib\MemoryReader.cpp" />
-    <ClCompile Include="..\..\..\VTFLib\MemoryWriter.cpp" />
-    <ClCompile Include="..\..\..\VTFLib\Proc.cpp" />
-    <ClCompile Include="..\..\..\VTFLib\ProcReader.cpp" />
-    <ClCompile Include="..\..\..\VTFLib\ProcWriter.cpp" />
-    <ClCompile Include="..\..\..\VTFLib\VMTFile.cpp" />
-    <ClCompile Include="..\..\..\VTFLib\VMTGroupNode.cpp" />
-    <ClCompile Include="..\..\..\VTFLib\VMTIntegerNode.cpp" />
-    <ClCompile Include="..\..\..\VTFLib\VMTNode.cpp" />
-    <ClCompile Include="..\..\..\VTFLib\VMTSingleNode.cpp" />
-    <ClCompile Include="..\..\..\VTFLib\VMTStringNode.cpp" />
-    <ClCompile Include="..\..\..\VTFLib\VMTValueNode.cpp" />
-    <ClCompile Include="..\..\..\VTFLib\VMTWrapper.cpp" />
-    <ClCompile Include="..\..\..\VTFLib\VTFFile.cpp" />
-    <ClCompile Include="..\..\..\VTFLib\VTFLib.cpp" />
-    <ClCompile Include="..\..\..\VTFLib\VTFMathlib.cpp" />
-    <ClCompile Include="..\..\..\VTFLib\VTFWrapper.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\VTFLib\Error.h" />
-    <ClInclude Include="..\..\..\VTFLib\FileReader.h" />
-    <ClInclude Include="..\..\..\VTFLib\FileWriter.h" />
-    <ClInclude Include="..\..\..\VTFLib\Float16.h" />
-    <ClInclude Include="..\..\..\VTFLib\MemoryReader.h" />
-    <ClInclude Include="..\..\..\VTFLib\MemoryWriter.h" />
-    <ClInclude Include="..\..\..\VTFLib\Proc.h" />
-    <ClInclude Include="..\..\..\VTFLib\ProcReader.h" />
-    <ClInclude Include="..\..\..\VTFLib\ProcWriter.h" />
-    <ClInclude Include="..\..\..\VTFLib\Reader.h" />
-    <ClInclude Include="..\..\..\VTFLib\Readers.h" />
-    <ClInclude Include="..\..\..\VTFLib\resource.h" />
-    <ClInclude Include="..\..\..\VTFLib\stdafx.h" />
-    <ClInclude Include="..\..\..\VTFLib\VMTFile.h" />
-    <ClInclude Include="..\..\..\VTFLib\VMTGroupNode.h" />
-    <ClInclude Include="..\..\..\VTFLib\VMTIntegerNode.h" />
-    <ClInclude Include="..\..\..\VTFLib\VMTNode.h" />
-    <ClInclude Include="..\..\..\VTFLib\VMTNodes.h" />
-    <ClInclude Include="..\..\..\VTFLib\VMTSingleNode.h" />
-    <ClInclude Include="..\..\..\VTFLib\VMTStringNode.h" />
-    <ClInclude Include="..\..\..\VTFLib\VMTValueNode.h" />
-    <ClInclude Include="..\..\..\VTFLib\VMTWrapper.h" />
-    <ClInclude Include="..\..\..\VTFLib\VTFDXTn.h" />
-    <ClInclude Include="..\..\..\VTFLib\VTFFile.h" />
-    <ClInclude Include="..\..\..\VTFLib\VTFFormat.h" />
-    <ClInclude Include="..\..\..\VTFLib\VTFLib.h" />
-    <ClInclude Include="..\..\..\VTFLib\VTFMathlib.h" />
-    <ClInclude Include="..\..\..\VTFLib\VTFWrapper.h" />
-    <ClInclude Include="..\..\..\VTFLib\Writer.h" />
-    <ClInclude Include="..\..\..\VTFLib\Writers.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\VTFLib\Resource.aps" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="..\..\..\VTFLib\Resource.rc" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{85ECFC39-0719-47B3-A90E-961E0F1750CA}</ProjectGuid>
-    <Keyword>Win32Proj</Keyword>
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{312C3841-E5F8-49E5-B345-65D7ABC63AF6}</ProjectGuid>
+    <RootNamespace>HLLib</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -108,8 +48,9 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -159,7 +100,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;VTFLIB_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HLLIB_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -177,7 +118,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;VTFLIB_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HLLIB_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -198,7 +139,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PreprocessorDefinitions>_DEBUG;VTFLIB_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HLLIB_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
@@ -214,7 +155,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PreprocessorDefinitions>NDEBUG;VTFLIB_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HLLIB_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
@@ -232,6 +173,84 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\HLLib\BSPFile.cpp" />
+    <ClCompile Include="..\..\..\HLLib\Checksum.cpp" />
+    <ClCompile Include="..\..\..\HLLib\DebugMemory.cpp" />
+    <ClCompile Include="..\..\..\HLLib\DirectoryFile.cpp" />
+    <ClCompile Include="..\..\..\HLLib\DirectoryFolder.cpp" />
+    <ClCompile Include="..\..\..\HLLib\DirectoryItem.cpp" />
+    <ClCompile Include="..\..\..\HLLib\Error.cpp" />
+    <ClCompile Include="..\..\..\HLLib\FileMapping.cpp" />
+    <ClCompile Include="..\..\..\HLLib\FileStream.cpp" />
+    <ClCompile Include="..\..\..\HLLib\GCFFile.cpp" />
+    <ClCompile Include="..\..\..\HLLib\GCFStream.cpp" />
+    <ClCompile Include="..\..\..\HLLib\HLLib.cpp" />
+    <ClCompile Include="..\..\..\HLLib\Mapping.cpp" />
+    <ClCompile Include="..\..\..\HLLib\MappingStream.cpp" />
+    <ClCompile Include="..\..\..\HLLib\MemoryMapping.cpp" />
+    <ClCompile Include="..\..\..\HLLib\MemoryStream.cpp" />
+    <ClCompile Include="..\..\..\HLLib\NCFFile.cpp" />
+    <ClCompile Include="..\..\..\HLLib\NullStream.cpp" />
+    <ClCompile Include="..\..\..\HLLib\Package.cpp" />
+    <ClCompile Include="..\..\..\HLLib\PAKFile.cpp" />
+    <ClCompile Include="..\..\..\HLLib\ProcStream.cpp" />
+    <ClCompile Include="..\..\..\HLLib\SGAFile.cpp" />
+    <ClCompile Include="..\..\..\HLLib\Stream.cpp" />
+    <ClCompile Include="..\..\..\HLLib\StreamMapping.cpp" />
+    <ClCompile Include="..\..\..\HLLib\Utility.cpp" />
+    <ClCompile Include="..\..\..\HLLib\VBSPFile.cpp" />
+    <ClCompile Include="..\..\..\HLLib\VPKFile.cpp" />
+    <ClCompile Include="..\..\..\HLLib\WADFile.cpp" />
+    <ClCompile Include="..\..\..\HLLib\Wrapper.cpp" />
+    <ClCompile Include="..\..\..\HLLib\XZPFile.cpp" />
+    <ClCompile Include="..\..\..\HLLib\ZIPFile.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\HLLib\BSPFile.h" />
+    <ClInclude Include="..\..\..\HLLib\Checksum.h" />
+    <ClInclude Include="..\..\..\HLLib\DebugMemory.h" />
+    <ClInclude Include="..\..\..\HLLib\DirectoryFile.h" />
+    <ClInclude Include="..\..\..\HLLib\DirectoryFolder.h" />
+    <ClInclude Include="..\..\..\HLLib\DirectoryItem.h" />
+    <ClInclude Include="..\..\..\HLLib\DirectoryItems.h" />
+    <ClInclude Include="..\..\..\HLLib\Error.h" />
+    <ClInclude Include="..\..\..\HLLib\FileMapping.h" />
+    <ClInclude Include="..\..\..\HLLib\FileStream.h" />
+    <ClInclude Include="..\..\..\HLLib\GCFFile.h" />
+    <ClInclude Include="..\..\..\HLLib\GCFStream.h" />
+    <ClInclude Include="..\..\..\HLLib\HLLib.h" />
+    <ClInclude Include="..\..\..\HLLib\Mapping.h" />
+    <ClInclude Include="..\..\..\HLLib\Mappings.h" />
+    <ClInclude Include="..\..\..\HLLib\MappingStream.h" />
+    <ClInclude Include="..\..\..\HLLib\MemoryMapping.h" />
+    <ClInclude Include="..\..\..\HLLib\MemoryStream.h" />
+    <ClInclude Include="..\..\..\HLLib\NCFFile.h" />
+    <ClInclude Include="..\..\..\HLLib\NullStream.h" />
+    <ClInclude Include="..\..\..\HLLib\Package.h" />
+    <ClInclude Include="..\..\..\HLLib\Packages.h" />
+    <ClInclude Include="..\..\..\HLLib\PAKFile.h" />
+    <ClInclude Include="..\..\..\HLLib\ProcStream.h" />
+    <ClInclude Include="..\..\..\HLLib\resource.h" />
+    <ClInclude Include="..\..\..\HLLib\SGAFile.h" />
+    <ClInclude Include="..\..\..\HLLib\stdafx.h" />
+    <ClInclude Include="..\..\..\HLLib\Stream.h" />
+    <ClInclude Include="..\..\..\HLLib\StreamMapping.h" />
+    <ClInclude Include="..\..\..\HLLib\Streams.h" />
+    <ClInclude Include="..\..\..\HLLib\Utility.h" />
+    <ClInclude Include="..\..\..\HLLib\VBSPFile.h" />
+    <ClInclude Include="..\..\..\HLLib\VPKFile.h" />
+    <ClInclude Include="..\..\..\HLLib\WADFile.h" />
+    <ClInclude Include="..\..\..\HLLib\Wrapper.h" />
+    <ClInclude Include="..\..\..\HLLib\XZPFile.h" />
+    <ClInclude Include="..\..\..\HLLib\ZIPFile.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\HLLib\hllib.dll.spec" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\..\HLLib\HLLib.rc" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

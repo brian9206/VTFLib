@@ -964,8 +964,6 @@ vlBool CVTFFile::Create(vlUInt uiWidth, vlUInt uiHeight, vlUInt uiFrames, vlUInt
 			delete []lpNewImageDataRGBA8888;
 		}
 
-		this->Destroy();
-
 		return vlTrue;
 	}
 	catch(...)

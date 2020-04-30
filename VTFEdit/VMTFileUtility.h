@@ -139,10 +139,248 @@ namespace VTFEdit
 		}
 	};
 
-	ref class VMTSyntaxHighlighter sealed : FastColoredTextBoxNS::SyntaxHighlighter
+	ref class VMTSyntaxHighlighter sealed : FastColoredTextBoxNS::SyntaxHighlighter, System::Collections::Generic::IEnumerable<FastColoredTextBoxNS::AutocompleteItem^>
 	{
-	public:
-		explicit VMTSyntaxHighlighter( FastColoredTextBoxNS::FastColoredTextBox^ currentTb ) : SyntaxHighlighter( currentTb ) {}
+		System::Text::RegularExpressions::Regex^ Comment;
+		FastColoredTextBoxNS::Style^ CommentStyle;
+		System::Text::RegularExpressions::Regex^ Error1;
+		System::Text::RegularExpressions::Regex^ Error2;
+		System::Text::RegularExpressions::Regex^ Number;
+		System::Text::RegularExpressions::Regex^ Str;
+		FastColoredTextBoxNS::Style^ ErrorStyle;
+		System::Text::RegularExpressions::Regex^ ShaderKeyWords;
+		FastColoredTextBoxNS::Style^ ShaderKeyWordsStyle;
+		System::Text::RegularExpressions::Regex^ ShaderNames;
+		FastColoredTextBoxNS::Style^ ShaderNamesStyle;
+		System::Text::RegularExpressions::Regex^ ToolKeyWords;
+		FastColoredTextBoxNS::Style^ ToolKeyWordsStyle;
+		System::Text::RegularExpressions::Regex^ ProxyKeyWords;
+		FastColoredTextBoxNS::Style^ ProxyStyle;
 
+		value class KeyWord
+		{
+		public:
+			KeyWord( String^ s, bool stat ) : isStatic( stat )
+			{
+				word = gcnew FastColoredTextBoxNS::AutocompleteItem( s );
+			}
+			FastColoredTextBoxNS::AutocompleteItem^ word;
+			bool isStatic;
+		};
+		System::Collections::Generic::List<KeyWord>^ keyWords;
+
+	public:
+		explicit VMTSyntaxHighlighter( FastColoredTextBoxNS::FastColoredTextBox^ currentTb, FastColoredTextBoxNS::AutocompleteMenu^ currentMenu ) : SyntaxHighlighter( currentTb )
+		{
+			using namespace FastColoredTextBoxNS;
+			using namespace System::Drawing;
+			using namespace System::Collections::Generic;
+			using namespace System::Text::RegularExpressions;
+
+			keyWords = gcnew System::Collections::Generic::List<KeyWord>();
+
+			Comment = gcnew Regex( R"X((?://)+.*)X", RegexOptions::Compiled );
+			Number = gcnew Regex( R"X(\b\d+[\.]?\d*\b)X", RegexOptions::Compiled );
+			Str = gcnew Regex( R"X("(?<range>.*?[^\\])")X", RegexOptions::Compiled );
+			Error1 = gcnew Regex( R"X((?<=[^"])[\$\%][\w_]*(?=["]))X", RegexOptions::Compiled );
+			Error2 = gcnew Regex( R"X((?<=["])(?>[\$\%]?[\w_\/]*)(?=[^"])\b)X", RegexOptions::Compiled );
+
+			String^ path = IO::Path::Combine( System::Windows::Forms::Application::StartupPath, "ShaderKeywords.ini" );
+			if ( IO::File::Exists( path ) )
+			{
+				auto highlightFile = gcnew IO::StreamReader( path, true );
+				auto words = gcnew List<String^>();
+				String^ line;
+				while ( ( line = highlightFile->ReadLine() ) )
+					words->Add( line->Trim() );
+				highlightFile->Close();
+				auto w = String::Join( "|", words );
+				ShaderKeyWords = gcnew Regex( String::Format( R"X(\B(?<range>\$({0}))\b)X", w ), RegexOptions::Compiled | RegexOptions::IgnoreCase );
+				for each ( String^ s in words )
+					keyWords->Add( KeyWord( String::Format( "${0}", s ), true ) );
+			}
+
+			path = IO::Path::Combine( System::Windows::Forms::Application::StartupPath, "ToolKeywords.ini" );
+			if ( IO::File::Exists( path ) )
+			{
+				auto highlightFile = gcnew IO::StreamReader( path, true );
+				auto words = gcnew List<String^>();
+				String^ line;
+				while ( ( line = highlightFile->ReadLine() ) )
+					words->Add( line->Trim() );
+				highlightFile->Close();
+				auto w = String::Join( "|", words );
+				ToolKeyWords = gcnew Regex( String::Format( R"X(\B(?<range>%({0}))\b)X", w ), RegexOptions::Compiled | RegexOptions::IgnoreCase );
+				for each ( String^ s in words )
+					keyWords->Add( KeyWord( String::Format( "%{0}", s ), true ) );
+			}
+
+			path = IO::Path::Combine( System::Windows::Forms::Application::StartupPath, "Proxies.ini" );
+			if ( IO::File::Exists( path ) )
+			{
+				auto highlightFile = gcnew IO::StreamReader( path, true );
+				auto words = gcnew List<String^>();
+				String^ line;
+				while ( ( line = highlightFile->ReadLine() ) )
+					words->Add( line->Trim() );
+				highlightFile->Close();
+				auto w = String::Join( "|", words );
+				ProxyKeyWords = gcnew Regex( String::Format( R"X(\b(?<range>({0}))\b)X", w ), RegexOptions::Compiled | RegexOptions::IgnoreCase );
+				for each ( String^ s in words )
+					keyWords->Add( KeyWord( s, true ) );
+			}
+
+			path = IO::Path::Combine( System::Windows::Forms::Application::StartupPath, "ShaderNames.ini" );
+			if ( IO::File::Exists( path ) )
+			{
+				auto highlightFile = gcnew IO::StreamReader( path, true );
+				auto words = gcnew List<String^>();
+				String^ line;
+				while ( ( line = highlightFile->ReadLine() ) )
+					words->Add( line->Trim() );
+				highlightFile->Close();
+				auto w = String::Join( "|", words );
+				ShaderNames = gcnew Regex( String::Format( R"X(\b(?<range>({0}))\b)X", w ), RegexOptions::Compiled | RegexOptions::IgnoreCase );
+				for each ( String^ s in words )
+					keyWords->Add( KeyWord( s, true ) );
+			}
+
+			auto colors = gcnew Dictionary<String^, Color>( StringComparer::InvariantCultureIgnoreCase );
+			path = IO::Path::Combine( System::Windows::Forms::Application::StartupPath, "HighlightColors.ini" );
+			if ( IO::File::Exists( path ) )
+			{
+				auto parseColor = gcnew Regex( R"X(^\s*(.*)\s*=\s*(\d{1,3}\s+\d{1,3}\s+\d{1,3})\s*$)X" );
+				auto highlightFile = gcnew IO::StreamReader( path, true );
+				String^ line;
+				while ( ( line = highlightFile->ReadLine() ) )
+				{
+					auto match = parseColor->Match( line );
+					if ( match->Groups->Count != 3 )
+						continue;
+					array<String^>^ s = { " " };
+					auto val = match->Groups[2]->Value->Split( s, StringSplitOptions::RemoveEmptyEntries );
+					if ( val->Length >= 3 )
+						colors[match->Groups[1]->Value->Trim()] = Color::FromArgb( Int32::Parse( val[0] ), Int32::Parse( val[1] ), Int32::Parse( val[2] ) );
+				}
+			}
+
+			Color clr;
+
+			if ( colors->TryGetValue( "Comment", clr ) )
+				CommentStyle = gcnew TextStyle( gcnew SolidBrush( clr ), nullptr, FontStyle::Italic );
+			else
+				CommentStyle = GreenStyle;
+
+			if ( colors->TryGetValue( "ShaderParam", clr ) )
+				ShaderKeyWordsStyle = gcnew TextStyle( gcnew SolidBrush( clr ), nullptr, FontStyle::Bold );
+			else
+				ShaderKeyWordsStyle = BlueStyle;
+
+			if ( colors->TryGetValue( "ShaderName", clr ) )
+				ShaderNamesStyle = gcnew TextStyle( gcnew SolidBrush( clr ), nullptr, FontStyle::Bold );
+			else
+				ShaderNamesStyle = GrayStyle;
+
+			if ( colors->TryGetValue( "ToolParam", clr ) )
+				ToolKeyWordsStyle = gcnew TextStyle( gcnew SolidBrush( clr ), nullptr, FontStyle::Bold );
+			else
+				ToolKeyWordsStyle = MaroonStyle;
+
+			if ( colors->TryGetValue( "Error", clr ) )
+				ErrorStyle = gcnew TextStyle( gcnew SolidBrush( clr ), nullptr, FontStyle::Regular );
+			else
+				ErrorStyle = RedStyle;
+
+			if ( colors->TryGetValue( "Proxy", clr ) )
+				ProxyStyle = gcnew TextStyle( gcnew SolidBrush( clr ), nullptr, FontStyle::Regular );
+			else
+				ProxyStyle = MagentaStyle;
+
+			StringStyle = gcnew TextStyle( gcnew SolidBrush( Color::FromArgb( 0xaa, 0x51, 0x1e ) ), nullptr, FontStyle::Regular );
+			NumberStyle = gcnew TextStyle( gcnew SolidBrush( Color::FromArgb( 167, 161, 87 ) ), nullptr, FontStyle::Regular );
+		}
+
+		void HighlightSyntax( FastColoredTextBoxNS::Language language, FastColoredTextBoxNS::Range^ range ) override
+		{
+			range->tb->CommentPrefix = "//";
+			range->tb->LeftBracket = L'[';
+			range->tb->RightBracket = L']';
+			range->tb->BracketsHighlightStrategy = FastColoredTextBoxNS::BracketsHighlightStrategy::Strategy2;
+
+			range->ClearStyle( CommentStyle, ErrorStyle, ShaderKeyWordsStyle, ShaderNamesStyle, ToolKeyWordsStyle, ProxyStyle, NumberStyle, StringStyle );
+
+			range->SetStyle( CommentStyle, Comment );
+
+			range->SetStyle( ErrorStyle, Error1 );
+			range->SetStyle( ErrorStyle, Error2 );
+
+			if ( ShaderKeyWords )
+				range->SetStyle( ShaderKeyWordsStyle, ShaderKeyWords );
+
+			if ( ShaderNames )
+				range->SetStyle( ShaderNamesStyle, ShaderNames );
+
+			if ( ToolKeyWords )
+				range->SetStyle( ToolKeyWordsStyle, ToolKeyWords );
+
+			if ( ProxyKeyWords )
+				range->SetStyle( ProxyStyle, ProxyKeyWords );
+
+			range->SetStyle( NumberStyle, Number );
+			range->SetStyle( StringStyle, Str );
+
+			range->ClearFoldingMarkers();
+			range->SetFoldingMarkers( "{", "}" );
+		}
+
+		void AutoIndentNeeded( System::Object^ sender, FastColoredTextBoxNS::AutoIndentEventArgs^ args ) override
+		{
+
+		}
+
+		virtual System::Collections::Generic::IEnumerator<FastColoredTextBoxNS::AutocompleteItem^>^ GetEnumerator()
+		{
+			return gcnew VMTKeyEnumerator( this );
+		}
+
+		virtual System::Collections::IEnumerator^ GetEnumerator2() = System::Collections::IEnumerable::GetEnumerator
+		{
+			return GetEnumerator();
+		}
+
+	private:
+		ref class VMTKeyEnumerator : System::Collections::Generic::IEnumerator<FastColoredTextBoxNS::AutocompleteItem^>
+		{
+			System::Collections::Generic::IEnumerator<KeyWord>^ keyWords;
+		public:
+			VMTKeyEnumerator( VMTSyntaxHighlighter^ parent ) : keyWords( parent->keyWords->GetEnumerator() ) {}
+			~VMTKeyEnumerator() {}
+
+			virtual bool MoveNext()
+			{
+				return keyWords->MoveNext();
+			}
+
+			virtual void Reset()
+			{
+				keyWords->Reset();
+			}
+
+			property FastColoredTextBoxNS::AutocompleteItem^ Current
+			{
+				virtual FastColoredTextBoxNS::AutocompleteItem^ get()
+				{
+					return keyWords->Current.word;
+				}
+			}
+
+			property Object^ Current2
+			{
+				virtual Object^ get() = System::Collections::IEnumerator::Current::get
+				{
+					return Current;
+				}
+			}
+		};
 	};
 }

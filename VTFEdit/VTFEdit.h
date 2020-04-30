@@ -45,7 +45,7 @@ namespace VTFEdit
 	private:
 		String^ sFileName;
 
-		VTFLib::CVMTFile* VMTFile;
+		bool bVMTFile;
 		VTFLib::CVTFFile* VTFFile;
 
 		bool bHDRReseting;
@@ -70,44 +70,6 @@ namespace VTFEdit
 
 		HWND hWndNewViewer;
 
-		ref class StyleInfo
-		{
-	public:
-			StyleInfo( Color clr, String^ pattern )
-			{
-				Style = gcnew FastColoredTextBoxNS::TextStyle( gcnew SolidBrush( clr ), nullptr, FontStyle::Regular );
-				using Opts = System::Text::RegularExpressions::RegexOptions;
-				Regex = gcnew System::Text::RegularExpressions::Regex( pattern, Opts::Compiled | Opts::IgnoreCase | Opts::CultureInvariant );
-			}
-
-			StyleInfo( Color clr, String^ pattern, String^ pattern2 ) : StyleInfo( clr, pattern )
-			{
-				using Opts = System::Text::RegularExpressions::RegexOptions;
-				AltRegex = gcnew System::Text::RegularExpressions::Regex( pattern2, Opts::Compiled | Opts::IgnoreCase | Opts::CultureInvariant );
-			}
-
-			property FastColoredTextBoxNS::TextStyle^ Style;
-			property System::Text::RegularExpressions::Regex^ Regex;
-			property System::Text::RegularExpressions::Regex^ AltRegex;
-		};
-		StyleInfo^ vmtKeyStyle;
-		StyleInfo^ toolKeyStyle;
-		StyleInfo^ errorStyle;
-		StyleInfo^ commentStyle;
-		array<StyleInfo^>^ additionalStyles;
-		System::Collections::Generic::List<StyleInfo^>^ proxyNamesList;
-		array<FastColoredTextBoxNS::Style^>^ styles;
-
-		static auto MakeStyle( String^ val, Color clr )
-		{
-			return gcnew StyleInfo( clr, String::Format( R"X((?<=["]){0}(?=["]))X", val ), String::Format( R"X((?<=[\s]){0}(?=[\s]))X", val ) );
-		}
-
-		static FastColoredTextBoxNS::Style^ ToStyle( StyleInfo^ info )
-		{
-			return info->Style;
-		}
-
 	public:
 		CVTFEdit()
 		{
@@ -131,45 +93,9 @@ namespace VTFEdit
 			this->InitializeComponent();
 
 			this->treFileSystem->ImageList = this->DirectoryItemInfoManager->SmallImageList;
-
-			vmtKeyStyle = gcnew StyleInfo( Color::FromArgb( 0, 0, 128 ), R"X((?<=["])\$[\w_]*(?=["]))X", R"X((?<=[\s])\$[\w_]*(?=[\s]))X" );
-			toolKeyStyle = gcnew StyleInfo( Color::FromArgb( 128, 64, 0 ), R"X((?<=["])\%[\w_]*(?=["]))X", R"X((?<=[\s])\%[\w_]*(?=[\s]))X" );
-			errorStyle = gcnew StyleInfo( Color::FromArgb( 255, 0, 0 ), R"X((?<=[^"])[\$\%][\w_]*(?=["]))X", R"X((?<=["])[\$\%][\w_]*(?=[^"]))X" );
-			commentStyle = gcnew StyleInfo( Color::FromArgb( 0xff3a803a ), R"X((?://)+.*)X" );
-
-			System::Collections::Generic::List<StyleInfo^>^ addStyles = gcnew System::Collections::Generic::List<StyleInfo^>();
-			String^ path = IO::Path::Combine( System::Windows::Forms::Application::StartupPath, "ShaderNames.ini" );
-			if ( IO::File::Exists( path ) )
-			{
-				IO::StreamReader^ highlightFile = gcnew IO::StreamReader( path, true );
-				String^ line;
-				Color clr = Color::FromArgb( 255, Color::DarkCyan );
-				while ( ( line = highlightFile->ReadLine() ) )
-					addStyles->Add( MakeStyle( line, clr ) );
-				highlightFile->Close();
-			}
-			path = IO::Path::Combine( System::Windows::Forms::Application::StartupPath, "ProxyNames.ini" );
-			if ( IO::File::Exists( path ) )
-			{
-				IO::StreamReader^ highlightFile = gcnew IO::StreamReader( path, true );
-				String^ line;
-				Color clr = Color::FromArgb( 255, Color::GreenYellow );
-				while ( ( line = highlightFile->ReadLine() ) )
-					addStyles->Add( MakeStyle( line, clr ) );
-				highlightFile->Close();
-			}
-
-			additionalStyles = addStyles->ToArray();
-			addStyles->Add( vmtKeyStyle );
-			addStyles->Add( toolKeyStyle );
-			addStyles->Add( errorStyle );
-			addStyles->Add( commentStyle );
-			styles = Linq::Enumerable::ToArray( Linq::Enumerable::Select( addStyles, gcnew Func<StyleInfo^, FastColoredTextBoxNS::Style^>( ToStyle ) ) );
 		}
 
 	protected:
-	private: System::Windows::Forms::MenuItem^  btnVMTFileValidateStrict;
-	private: System::Windows::Forms::MenuItem^  btnVMTFileValidateLoose;
 	private: System::Windows::Forms::TabPage^  tabResources;
 	private: System::Windows::Forms::GroupBox^  grpResourceInfo;
 	private: System::Windows::Forms::Label^  lblResourceCount;
@@ -194,8 +120,6 @@ namespace VTFEdit
 	private: System::Windows::Forms::StatusBarPanel^  pnlFileName;
 	private: System::Windows::Forms::MenuItem^  btnFileSystemSpace2;
 	private: System::Windows::Forms::MenuItem^  btnFileSystemDelete;
-	private: System::Windows::Forms::MenuItem^  btnVMTFileSpace3;
-	private: System::Windows::Forms::MenuItem^  btnVMTFileValidate;
 	private: System::Windows::Forms::MenuItem^  btnNew;
 	private: System::Windows::Forms::ContextMenu^  mnuVMTFile;
 	private: System::Windows::Forms::MenuItem^  btnVMTFileUndo;
@@ -491,10 +415,6 @@ namespace VTFEdit
 			this->btnVMTFileDelete = gcnew System::Windows::Forms::MenuItem();
 			this->btnVMTFileSpace2 = gcnew System::Windows::Forms::MenuItem();
 			this->btnVMTFileSelectAll = gcnew System::Windows::Forms::MenuItem();
-			this->btnVMTFileSpace3 = gcnew System::Windows::Forms::MenuItem();
-			this->btnVMTFileValidate = gcnew System::Windows::Forms::MenuItem();
-			this->btnVMTFileValidateLoose = gcnew System::Windows::Forms::MenuItem();
-			this->btnVMTFileValidateStrict = gcnew System::Windows::Forms::MenuItem();
 			this->dlgImportFile = gcnew System::Windows::Forms::OpenFileDialog();
 			this->dlgExportFile = gcnew System::Windows::Forms::SaveFileDialog();
 			this->barTool = gcnew System::Windows::Forms::ToolBar();
@@ -1851,10 +1771,20 @@ namespace VTFEdit
 			this->txtVMTFile->Font = gcnew System::Drawing::Font( "Courier New", 9.75f );
 			this->txtVMTFile->TextChanged += gcnew System::EventHandler<FastColoredTextBoxNS::TextChangedEventArgs^>(this, &CVTFEdit::txtVMTFile_TextChanged);
 			this->txtVMTFile->SelectionChanged += gcnew System::EventHandler(this, &CVTFEdit::txtVMTFile_SelectionChanged);
+			auto popupMenu = gcnew FastColoredTextBoxNS::AutocompleteMenu( txtVMTFile );
+			popupMenu->ForeColor = Color::Black;
+			popupMenu->BackColor = Color::WhiteSmoke;
+			popupMenu->SelectedColor = Color::CadetBlue;
+			popupMenu->SearchPattern = R"([\$\%\w\.])";
+			popupMenu->AllowTabKey = true;
+			popupMenu->AlwaysShowTooltip = true;
+			auto highlightCompleter = gcnew VMTSyntaxHighlighter( this->txtVMTFile, popupMenu );
+			popupMenu->Items->SetAutocompleteItems( highlightCompleter );
+			this->txtVMTFile->SyntaxHighlighter = highlightCompleter;
 			//
 			// mnuVMTFile
 			//
-			array<System::Windows::Forms::MenuItem^>^ __mcTemp__20 = gcnew array<System::Windows::Forms::MenuItem^>(10);
+			array<System::Windows::Forms::MenuItem^>^ __mcTemp__20 = gcnew array<System::Windows::Forms::MenuItem^>(8);
 			__mcTemp__20[0] = this->btnVMTFileUndo;
 			__mcTemp__20[1] = this->btnVMTFileSpace1;
 			__mcTemp__20[2] = this->btnVMTFileCut;
@@ -1863,8 +1793,6 @@ namespace VTFEdit
 			__mcTemp__20[5] = this->btnVMTFileDelete;
 			__mcTemp__20[6] = this->btnVMTFileSpace2;
 			__mcTemp__20[7] = this->btnVMTFileSelectAll;
-			__mcTemp__20[8] = this->btnVMTFileSpace3;
-			__mcTemp__20[9] = this->btnVMTFileValidate;
 			this->mnuVMTFile->MenuItems->AddRange(__mcTemp__20);
 			//
 			// btnVMTFileUndo
@@ -1918,32 +1846,6 @@ namespace VTFEdit
 			this->btnVMTFileSelectAll->Index = 7;
 			this->btnVMTFileSelectAll->Text = "Select &All";
 			this->btnVMTFileSelectAll->Click += gcnew System::EventHandler(this, &CVTFEdit::btnVMTFileSelectAll_Click);
-			//
-			// btnVMTFileSpace3
-			//
-			this->btnVMTFileSpace3->Index = 8;
-			this->btnVMTFileSpace3->Text = "-";
-			//
-			// btnVMTFileValidate
-			//
-			this->btnVMTFileValidate->Index = 9;
-			array<System::Windows::Forms::MenuItem^>^ __mcTemp__21 = gcnew array<System::Windows::Forms::MenuItem^>(2);
-			__mcTemp__21[0] = this->btnVMTFileValidateLoose;
-			__mcTemp__21[1] = this->btnVMTFileValidateStrict;
-			this->btnVMTFileValidate->MenuItems->AddRange(__mcTemp__21);
-			this->btnVMTFileValidate->Text = "&Validate";
-			//
-			// btnVMTFileValidateLoose
-			//
-			this->btnVMTFileValidateLoose->Index = 0;
-			this->btnVMTFileValidateLoose->Text = "&Loose";
-			this->btnVMTFileValidateLoose->Click += gcnew System::EventHandler(this, &CVTFEdit::btnVMTFileValidateLoose_Click);
-			//
-			// btnVMTFileValidateStrict
-			//
-			this->btnVMTFileValidateStrict->Index = 1;
-			this->btnVMTFileValidateStrict->Text = "&Strict";
-			this->btnVMTFileValidateStrict->Click += gcnew System::EventHandler(this, &CVTFEdit::btnVMTFileValidateStrict_Click);
 			//
 			// dlgImportFile
 			//
@@ -2726,7 +2628,7 @@ namespace VTFEdit
 					{
 						this->Text = "untitled.vtf - ", Application::ProductName;
 					}
-					else if(this->VMTFile)
+					else if(this->bVMTFile)
 					{
 						this->Text = "untitled.vmt - ", Application::ProductName;
 					}
@@ -3516,36 +3418,13 @@ namespace VTFEdit
 			return true;
 		}
 
-		private: void SetVMTFile(VTFLib::CVMTFile *VMTFile)
+		private: void SetVMTFile()
 		{
-			this->VMTFile = VMTFile;
-
-			/*vlUInt Size;
-			char cBuffer[8192];
-
-			VMTFile->Save(cBuffer, sizeof(cBuffer), Size);
-			cBuffer[Size] = '\0';
-
-			this->txtVMTFile->Text = new String(cBuffer);
-			this->txtVMTFile->Visible = true;*/
+			this->bVMTFile = true;
 
 			this->EnableVMTContextMenuItems();
 
 			this->txtVMTFile->Visible = true;
-		}
-
-		private: bool GetVMTFile()
-		{
-			char *cText = (char *)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(this->txtVMTFile->Text).ToPointer();
-			vlBool bResult = VMTFile->Load( cText, this->txtVMTFile->Text->Length);
-			System::Runtime::InteropServices::Marshal::FreeHGlobal((IntPtr)cText);
-
-			if (!bResult)
-			{
-				MessageBox::Show(String::Concat("Error parsing VMT:\n\n", gcnew String(vlGetLastError())), Application::ProductName, MessageBoxButtons::OK, MessageBoxIcon::Error);
-			}
-
-			return bResult != 0;
 		}
 
 		private: System::Void barTool_ButtonClick(System::Object^ sender, System::Windows::Forms::ToolBarButtonClickEventArgs^ e)
@@ -3576,13 +3455,11 @@ namespace VTFEdit
 		{
 			this->Close();
 
-			VTFLib::CVMTFile *VMTFile = new VTFLib::CVMTFile();
-
 			this->txtVMTFile->Text = "\"LightmappedGeneric\"\n{\n}";
 			this->txtVMTFile->SelectionStart = 1;
 			this->txtVMTFile->SelectionLength = 18;
 
-			this->SetVMTFile(VMTFile);
+			this->SetVMTFile();
 
 			this->FileName = nullptr;
 
@@ -3638,47 +3515,26 @@ namespace VTFEdit
 			}
 			else if(sFileName->ToLower()->EndsWith(".vmt"))
 			{
-				VTFLib::CVMTFile *VMTFile = new VTFLib::CVMTFile();
+				this->txtVMTFile->OpenFile(sFileName);
 
-				try
+				this->SetVMTFile();
+
+				if(!bTemp)
 				{
-					if(VMTFile->Load(cPath))
-					{
-						this->txtVMTFile->OpenFile(sFileName);
+					this->FileName = sFileName;
 
-						this->SetVMTFile(VMTFile);
-
-						if(!bTemp)
-						{
-							this->FileName = sFileName;
-
-							this->AddRecentFile(this->FileName);
-						}
-						else
-						{
-							this->FileName = nullptr;
-						}
-
-						this->btnSave->Enabled = true;
-						this->btnToolSave->Enabled = true;
-						this->btnSaveAs->Enabled = true;
-
-						this->txtVMTFile->Focus();
-					}
-					else
-					{
-						delete VMTFile;
-
-						MessageBox::Show(String::Concat("Error loading VMT texture:\n\n", gcnew String(vlGetLastError())), Application::ProductName, MessageBoxButtons::OK, MessageBoxIcon::Error);
-					}
+					this->AddRecentFile(this->FileName);
 				}
-				catch ( Exception^ )
+				else
 				{
-					delete VMTFile;
-
-					MessageBox::Show( "Error loading VMT texture, probably malformed!\n\n", Application::ProductName, MessageBoxButtons::OK, MessageBoxIcon::Error );
-					return;
+					this->FileName = nullptr;
 				}
+
+				this->btnSave->Enabled = true;
+				this->btnToolSave->Enabled = true;
+				this->btnSaveAs->Enabled = true;
+
+				this->txtVMTFile->Focus();
 			}
 		}
 
@@ -3713,13 +3569,8 @@ namespace VTFEdit
 					MessageBox::Show(String::Concat("Error saving VTF texture:\n\n", gcnew String(vlGetLastError())), Application::ProductName, MessageBoxButtons::OK, MessageBoxIcon::Error);
 				}
 			}
-			else if(this->VMTFile != 0)
+			else if(this->bVMTFile)
 			{
-				if(!this->GetVMTFile())
-				{
-					return;
-				}
-
 				try
 				{
 					this->txtVMTFile->SaveToFile( sFileName, gcnew System::Text::UTF8Encoding( false ) );
@@ -3742,7 +3593,7 @@ namespace VTFEdit
 					this->Save(this->dlgSaveVTFFile->FileName);
 				}
 			}
-			else if(this->VMTFile != 0)
+			else if(this->bVMTFile)
 			{
 				if(this->dlgSaveVMTFile->ShowDialog() == System::Windows::Forms::DialogResult::OK)
 				{
@@ -4021,8 +3872,7 @@ namespace VTFEdit
 			this->txtVMTFile->Clear();
 			this->txtVMTFile->ClearUndo();
 
-			delete this->VMTFile;
-			this->VMTFile = 0;
+			this->bVMTFile = false;
 
 			delete this->VTFFile;
 			this->VTFFile = 0;
@@ -4433,14 +4283,20 @@ namespace VTFEdit
 			if(System::Threading::Thread::CurrentThread->ApartmentState == System::Threading::ApartmentState::STA)
 			{
 				this->btnVMTFilePaste->Enabled = false;
-				array<String^>^ Formats = System::Windows::Forms::Clipboard::GetDataObject()->GetFormats();
-				for(int i = 0; i < Formats->Length; i++)
+				try
 				{
-					if(System::Windows::Forms::DataFormats::GetFormat(Formats[i])->Name->Equals("Text"))
+					array<String^>^ Formats = System::Windows::Forms::Clipboard::GetDataObject()->GetFormats();
+					for ( int i = 0; i < Formats->Length; i++ )
 					{
-						this->btnVMTFilePaste->Enabled = true;
-						break;
+						if ( System::Windows::Forms::DataFormats::GetFormat( Formats[i] )->Name->Equals( "Text" ) )
+						{
+							this->btnVMTFilePaste->Enabled = true;
+							break;
+						}
 					}
+				}
+				catch ( Exception^ )
+				{
 				}
 			}
 			else
@@ -4493,27 +4349,6 @@ namespace VTFEdit
 			this->EnableVMTContextMenuItems();
 		}
 
-		private: System::Void btnVMTFileValidateLoose_Click(System::Object ^  sender, System::EventArgs ^  e)
-		{
-			char *cText = (char *)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(this->txtVMTFile->Text).ToPointer();
-			if(VMTFile->Load( cText, this->txtVMTFile->Text->Length))
-			{
-				MessageBox::Show("VMT validation successful.", Application::ProductName, MessageBoxButtons::OK, MessageBoxIcon::Information);
-			}
-			else
-			{
-				MessageBox::Show(String::Concat("Error validating VMT:\n\n", gcnew String(vlGetLastError())), Application::ProductName, MessageBoxButtons::OK, MessageBoxIcon::Error);
-			}
-			System::Runtime::InteropServices::Marshal::FreeHGlobal((IntPtr)cText);
-		}
-
-		private: System::Void btnVMTFileValidateStrict_Click(System::Object ^  sender, System::EventArgs ^  e)
-		{
-			vlSetInteger(VTFLIB_VMT_PARSE_MODE, PARSE_MODE_STRICT);
-			this->btnVMTFileValidateLoose_Click(sender, e);
-			vlSetInteger(VTFLIB_VMT_PARSE_MODE, PARSE_MODE_LOOSE);
-		}
-
 		private: System::Void txtVMTFile_SelectionChanged(System::Object ^  sender, System::EventArgs ^  e)
 		{
 			this->EnableVMTContextMenuItems();
@@ -4522,24 +4357,6 @@ namespace VTFEdit
 		private: System::Void txtVMTFile_TextChanged(System::Object ^  sender, FastColoredTextBoxNS::TextChangedEventArgs^  e)
 		{
 			this->EnableVMTContextMenuItems();
-
-			e->ChangedRange->ClearStyle( styles );
-
-			e->ChangedRange->SetStyle( commentStyle->Style, commentStyle->Regex );
-			e->ChangedRange->SetStyle( vmtKeyStyle->Style, vmtKeyStyle->Regex );
-			e->ChangedRange->SetStyle( vmtKeyStyle->Style, vmtKeyStyle->AltRegex );
-			e->ChangedRange->SetStyle( toolKeyStyle->Style, toolKeyStyle->Regex );
-			e->ChangedRange->SetStyle( toolKeyStyle->Style, toolKeyStyle->AltRegex );
-			e->ChangedRange->SetStyle( errorStyle->Style, errorStyle->Regex );
-			e->ChangedRange->SetStyle( errorStyle->Style, errorStyle->AltRegex );
-			for each ( StyleInfo^ style in additionalStyles )
-			{
-				e->ChangedRange->SetStyle( style->Style, style->Regex );
-				e->ChangedRange->SetStyle( style->Style, style->AltRegex );
-			}
-
-			e->ChangedRange->ClearFoldingMarkers();
-			e->ChangedRange->SetFoldingMarkers( "{", "}" );
 		}
 
 		//
@@ -5452,7 +5269,7 @@ namespace VTFEdit
 		private: System::Void Control_DragDrop(System::Object^ sender, System::Windows::Forms::DragEventArgs^ e)
 		{
 			array<String^>^ lpFiles = safe_cast<array<String^>^>(e->Data->GetData(System::Windows::Forms::DataFormats::FileDrop));
-			if(lpFiles->Length > 0)
+			if( lpFiles && lpFiles->Length > 0)
 			{
 				this->Open(lpFiles[0], false);
 			}

@@ -22,10 +22,12 @@ The library contains five folders:
 * **VTFEdit** - Contains C++ .NET example program source code.
 * **VTFLib** - Contains C++ library source code.
 
-The project files are for Visual Studio .NET 2003 and 2005; no .NET extensions are used except in VTFEdit. Visual Studio 6.0 project files have also been
-included, but nvDXTLib does not come with the correct .lib files to link with. nvDXTLib is required for VTF creation and can be downloaded from:
+The project files are for Visual Studio 2019; no .NET extensions are used except in VTFEdit. 
 
-http://developer.nvidia.com/object/dds_utilities_legacy.html
+## First time building
+
+1. Install vcpkg if you don't have it from [here](https://github.com/microsoft/vcpkg)
+2. ```vcpkg install nvtt:x64-windows-static devil:x64-windows```
 
 ## VTFCmd Usage
 

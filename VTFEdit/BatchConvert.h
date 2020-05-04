@@ -23,7 +23,7 @@
 #include "VTFOptions.h"
 #include "VMTFileUtility.h"
 #include "VTFFileUtility.h"
-#include "il.h"
+#include "IL/il.h"
 
 using namespace System;
 using namespace System::ComponentModel;

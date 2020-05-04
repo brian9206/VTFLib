@@ -22,48 +22,7 @@
 #define USE_NVTT
 
 #ifdef USE_NVTT
-#include "nvtt.h"
-#ifdef _M_AMD64
-	#ifdef _DEBUG
-		#pragma comment(lib, "../../../lib/x64/debug/nvtt_d.lib")
-		#pragma comment(lib, "../../../lib/x64/debug/bc6h_d.lib")
-		#pragma comment(lib, "../../../lib/x64/debug/bc7_d.lib")
-		#pragma comment(lib, "../../../lib/x64/debug/nvcore_d.lib")
-		#pragma comment(lib, "../../../lib/x64/debug/nvimage_d.lib")
-		#pragma comment(lib, "../../../lib/x64/debug/nvmath_d.lib")
-		#pragma comment(lib, "../../../lib/x64/debug/nvthread_d.lib")
-		#pragma comment(lib, "../../../lib/x64/debug/squish_d.lib")
-	#else
-		#pragma comment(lib, "../../../lib/x64/release/nvtt.lib")
-		#pragma comment(lib, "../../../lib/x64/release/bc6h.lib")
-		#pragma comment(lib, "../../../lib/x64/release/bc7.lib")
-		#pragma comment(lib, "../../../lib/x64/release/nvcore.lib")
-		#pragma comment(lib, "../../../lib/x64/release/nvimage.lib")
-		#pragma comment(lib, "../../../lib/x64/release/nvmath.lib")
-		#pragma comment(lib, "../../../lib/x64/release/nvthread.lib")
-		#pragma comment(lib, "../../../lib/x64/release/squish.lib")
-	#endif
-#else
-	#ifdef _DEBUG
-		#pragma comment(lib, "../../../lib/x86/debug/nvtt_d.lib")
-		#pragma comment(lib, "../../../lib/x86/debug/bc6h_d.lib")
-		#pragma comment(lib, "../../../lib/x86/debug/bc7_d.lib")
-		#pragma comment(lib, "../../../lib/x86/debug/nvcore_d.lib")
-		#pragma comment(lib, "../../../lib/x86/debug/nvimage_d.lib")
-		#pragma comment(lib, "../../../lib/x86/debug/nvmath_d.lib")
-		#pragma comment(lib, "../../../lib/x86/debug/nvthread_d.lib")
-		#pragma comment(lib, "../../../lib/x86/debug/squish_d.lib")
-	#else
-		#pragma comment(lib, "../../../lib/x86/release/nvtt.lib")
-		#pragma comment(lib, "../../../lib/x86/release/bc6h.lib")
-		#pragma comment(lib, "../../../lib/x86/release/bc7.lib")
-		#pragma comment(lib, "../../../lib/x86/release/nvcore.lib")
-		#pragma comment(lib, "../../../lib/x86/release/nvimage.lib")
-		#pragma comment(lib, "../../../lib/x86/release/nvmath.lib")
-		#pragma comment(lib, "../../../lib/x86/release/nvthread.lib")
-		#pragma comment(lib, "../../../lib/x86/release/squish.lib")
-	#endif
-#endif
+#include "nvtt/nvtt.h"
 #endif
 
 using namespace VTFLib;

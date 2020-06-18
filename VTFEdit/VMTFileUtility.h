@@ -170,7 +170,7 @@ namespace VTFEdit
 		System::Collections::Generic::List<KeyWord>^ keyWords;
 
 	public:
-		explicit VMTSyntaxHighlighter( FastColoredTextBoxNS::FastColoredTextBox^ currentTb, FastColoredTextBoxNS::AutocompleteMenu^ currentMenu ) : SyntaxHighlighter( currentTb )
+		explicit VMTSyntaxHighlighter( FastColoredTextBoxNS::FastColoredTextBox^ currentTb ) : SyntaxHighlighter( currentTb )
 		{
 			using namespace FastColoredTextBoxNS;
 			using namespace System::Drawing;
@@ -182,8 +182,8 @@ namespace VTFEdit
 			Comment = gcnew Regex( R"X((?://)+.*)X", RegexOptions::Compiled );
 			Number = gcnew Regex( R"X(\b\d+[\.]?\d*\b)X", RegexOptions::Compiled );
 			Str = gcnew Regex( R"X("(?<range>.*?[^\\])")X", RegexOptions::Compiled );
-			Error1 = gcnew Regex( R"X((?<=[^"])[\$\%][\w_]*(?=["]))X", RegexOptions::Compiled );
-			Error2 = gcnew Regex( R"X((?<=["])(?>[\$\%]?[\w_\/]*)(?=[^"])\b)X", RegexOptions::Compiled );
+			Error1 = gcnew Regex( R"X((?<=^|\s)(?=[^"])(?>[\$\%]?[\w_.\/\\]*)(?=["]))X", RegexOptions::Compiled );
+			Error2 = gcnew Regex( R"X((?<=["])(?>[\$\%]?[\w_.\/\\]*)(?=([^"]|$))\b)X", RegexOptions::Compiled );
 
 			String^ path = IO::Path::Combine( System::Windows::Forms::Application::StartupPath, "ShaderKeywords.ini" );
 			if ( IO::File::Exists( path ) )

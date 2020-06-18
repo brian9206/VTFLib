@@ -132,6 +132,7 @@ namespace VTFEdit
 	private: System::Windows::Forms::MenuItem^  btnVMTFileSelectAll;
 	private: System::Windows::Forms::MenuItem^  btnConvertFolder;
 	private: FastColoredTextBoxNS::FastColoredTextBox^  txtVMTFile;
+	private: VMTSyntaxHighlighter^ syntaxHighlighter;
 	private: System::Windows::Forms::MenuItem^  btnOptionsSpace1;
 	private: System::Windows::Forms::MenuItem^  btnAutoCreateVMTFile;
 	private: System::Windows::Forms::MenuItem^  btnConvertWADFile;
@@ -1771,16 +1772,16 @@ namespace VTFEdit
 			this->txtVMTFile->Font = gcnew System::Drawing::Font( "Courier New", 9.75f );
 			this->txtVMTFile->TextChanged += gcnew System::EventHandler<FastColoredTextBoxNS::TextChangedEventArgs^>(this, &CVTFEdit::txtVMTFile_TextChanged);
 			this->txtVMTFile->SelectionChanged += gcnew System::EventHandler(this, &CVTFEdit::txtVMTFile_SelectionChanged);
-			auto popupMenu = gcnew FastColoredTextBoxNS::AutocompleteMenu( txtVMTFile );
+			auto popupMenu = gcnew FastColoredTextBoxNS::AutocompleteMenu( this->txtVMTFile );
 			popupMenu->ForeColor = Color::Black;
 			popupMenu->BackColor = Color::WhiteSmoke;
 			popupMenu->SelectedColor = Color::CadetBlue;
 			popupMenu->SearchPattern = R"([\$\%\w\.])";
 			popupMenu->AllowTabKey = true;
 			popupMenu->AlwaysShowTooltip = true;
-			auto highlightCompleter = gcnew VMTSyntaxHighlighter( this->txtVMTFile, popupMenu );
-			popupMenu->Items->SetAutocompleteItems( highlightCompleter );
-			this->txtVMTFile->SyntaxHighlighter = highlightCompleter;
+			this->syntaxHighlighter = gcnew VMTSyntaxHighlighter( this->txtVMTFile );
+			popupMenu->Items->SetAutocompleteItems( this->syntaxHighlighter );
+			this->txtVMTFile->SyntaxHighlighter = this->syntaxHighlighter;
 			//
 			// mnuVMTFile
 			//
@@ -3316,12 +3317,12 @@ namespace VTFEdit
 				case VTF_RSRC_KEY_VALUE_DATA:
 					if(lpData && uiSize)
 					{
-						VTFLib::CVMTFile *pVMTFile = new VTFLib::CVMTFile();
+						VTFLib::CVMTFile pVMTFile;
 
-						if(pVMTFile->Load(lpData, uiSize))
+						if(pVMTFile.Load(lpData, uiSize))
 						{
-							pNode->Text = gcnew String(pVMTFile->GetRoot()->GetName());
-							this->SetInformation(pNode, pVMTFile->GetRoot());
+							pNode->Text = gcnew String(pVMTFile.GetRoot()->GetName());
+							this->SetInformation(pNode, pVMTFile.GetRoot());
 						}
 					}
 				default:

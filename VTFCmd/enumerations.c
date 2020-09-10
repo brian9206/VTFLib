@@ -221,57 +221,13 @@ VTFImageFlag StringToImageFlag(const vlChar *cString)
 
 VTFMipmapFilter StringToMipmapFilter(const vlChar *cString)
 {
-	if(stricmp(cString, "POINT") == 0)
-	{
-		return MIPMAP_FILTER_POINT;
-	}
-	else if(stricmp(cString, "BOX") == 0)
+	if(stricmp(cString, "BOX") == 0)
 	{
 		return MIPMAP_FILTER_BOX;
 	}
 	else if(stricmp(cString, "TRIANGLE") == 0)
 	{
 		return MIPMAP_FILTER_TRIANGLE;
-	}
-	else if(stricmp(cString, "QUADRATIC") == 0)
-	{
-		return MIPMAP_FILTER_QUADRATIC;
-	}
-	else if(stricmp(cString, "CUBIC") == 0)
-	{
-		return MIPMAP_FILTER_CUBIC;
-	}
-	else if(stricmp(cString, "CATROM") == 0)
-	{
-		return MIPMAP_FILTER_CATROM;
-	}
-	else if(stricmp(cString, "MITCHELL") == 0)
-	{
-		return MIPMAP_FILTER_MITCHELL;
-	}
-	else if(stricmp(cString, "GAUSSIAN") == 0)
-	{
-		return MIPMAP_FILTER_GAUSSIAN;
-	}
-	else if(stricmp(cString, "SINC") == 0)
-	{
-		return MIPMAP_FILTER_SINC;
-	}
-	else if(stricmp(cString, "BESSEL") == 0)
-	{
-		return MIPMAP_FILTER_BESSEL;
-	}
-	else if(stricmp(cString, "HANNING") == 0)
-	{
-		return MIPMAP_FILTER_HANNING;
-	}
-	else if(stricmp(cString, "HAMMING") == 0)
-	{
-		return MIPMAP_FILTER_HAMMING;
-	}
-	else if(stricmp(cString, "BLACKMAN") == 0)
-	{
-		return MIPMAP_FILTER_BLACKMAN;
 	}
 	else if(stricmp(cString, "KAISER") == 0)
 	{
@@ -280,122 +236,6 @@ VTFMipmapFilter StringToMipmapFilter(const vlChar *cString)
 	else
 	{
 		return MIPMAP_FILTER_COUNT;
-	}
-}
-
-VTFSharpenFilter StringToSharpenFilter(const vlChar *cString)
-{
-	if(stricmp(cString, "NONE") == 0)
-	{
-		return SHARPEN_FILTER_NONE;
-	}
-	else if(stricmp(cString, "NEGATIVE") == 0)
-	{
-		return SHARPEN_FILTER_NEGATIVE;
-	}
-	else if(stricmp(cString, "LIGHTER") == 0)
-	{
-		return SHARPEN_FILTER_LIGHTER;
-	}
-	else if(stricmp(cString, "DARKER") == 0)
-	{
-		return SHARPEN_FILTER_DARKER;
-	}
-	else if(stricmp(cString, "CONTRASTMORE") == 0)
-	{
-		return SHARPEN_FILTER_CONTRASTMORE;
-	}
-	else if(stricmp(cString, "CONTRASTLESS") == 0)
-	{
-		return SHARPEN_FILTER_CONTRASTLESS;
-	}
-	else if(stricmp(cString, "SMOOTHEN") == 0)
-	{
-		return SHARPEN_FILTER_SMOOTHEN;
-	}
-	else if(stricmp(cString, "SHARPENSOFT") == 0)
-	{
-		return SHARPEN_FILTER_SHARPENSOFT;
-	}
-	else if(stricmp(cString, "SHARPENMEDIUM") == 0)
-	{
-		return SHARPEN_FILTER_SHARPENMEDIUM;
-	}
-	else if(stricmp(cString, "SHARPENSTRONG") == 0)
-	{
-		return SHARPEN_FILTER_SHARPENSTRONG;
-	}
-	else if(stricmp(cString, "FINDEDGES") == 0)
-	{
-		return SHARPEN_FILTER_FINDEDGES;
-	}
-	else if(stricmp(cString, "CONTOUR") == 0)
-	{
-		return SHARPEN_FILTER_CONTOUR;
-	}
-	else if(stricmp(cString, "EDGEDETECT") == 0)
-	{
-		return SHARPEN_FILTER_EDGEDETECT;
-	}
-	else if(stricmp(cString, "EDGEDETECTSOFT") == 0)
-	{
-		return SHARPEN_FILTER_EDGEDETECTSOFT;
-	}
-	else if(stricmp(cString, "EMBOSS") == 0)
-	{
-		return SHARPEN_FILTER_EMBOSS;
-	}
-	else if(stricmp(cString, "MEANREMOVAL") == 0)
-	{
-		return SHARPEN_FILTER_MEANREMOVAL;
-	}
-	else if(stricmp(cString, "UNSHARP") == 0)
-	{
-		return SHARPEN_FILTER_UNSHARP;
-	}
-	else if(stricmp(cString, "XSHARPEN") == 0)
-	{
-		return SHARPEN_FILTER_XSHARPEN;
-	}
-	else if(stricmp(cString, "WARPSHARP") == 0)
-	{
-		return SHARPEN_FILTER_WARPSHARP;
-	}
-	else
-	{
-		return SHARPEN_FILTER_COUNT;
-	}
-}
-
-VTFKernelFilter StringToKernelFilter(const vlChar *cString)
-{
-	if(stricmp(cString, "4X") == 0)
-	{
-		return KERNEL_FILTER_4X;
-	}
-	else if(stricmp(cString, "3X3") == 0)
-	{
-		return KERNEL_FILTER_3X3;
-	}
-	else if(stricmp(cString, "5X5") == 0)
-	{
-		return KERNEL_FILTER_5X5;
-	}
-	else if(stricmp(cString, "7X7") == 0)
-	{
-		return KERNEL_FILTER_7X7;
-	}
-	else if(stricmp(cString, "9X9") == 0)
-	{
-		return KERNEL_FILTER_9X9;
-	}
-	else if(stricmp(cString, "DUDV") == 0)
-	{
-		return KERNEL_FILTER_DUDV;
-	}
-	else
-	{
-		return KERNEL_FILTER_COUNT;
 	}
 }
 
@@ -409,10 +249,6 @@ VTFHeightConversionMethod StringToHeightConversionMethod(const vlChar *cString)
 	{
 		return HEIGHT_CONVERSION_METHOD_AVERAGE_RGB;
 	}
-	else if(stricmp(cString, "BIASEDRGB") == 0)
-	{
-		return HEIGHT_CONVERSION_METHOD_BIASED_RGB;
-	}
 	else if(stricmp(cString, "RED") == 0)
 	{
 		return HEIGHT_CONVERSION_METHOD_RED;
@@ -424,14 +260,6 @@ VTFHeightConversionMethod StringToHeightConversionMethod(const vlChar *cString)
 	else if(stricmp(cString, "BLUE") == 0)
 	{
 		return HEIGHT_CONVERSION_METHOD_BLUE;
-	}
-	else if(stricmp(cString, "MAXRGB") == 0)
-	{
-		return HEIGHT_CONVERSION_METHOD_MAX_RGB;
-	}
-	else if(stricmp(cString, "COLORSPACE") == 0)
-	{
-		return HEIGHT_CONVERSION_METHOD_COLORSPACE;
 	}
 	else
 	{
@@ -481,5 +309,37 @@ VTFResizeMethod StringToResizeMethod(const vlChar *cString)
 	else
 	{
 		return RESIZE_COUNT;
+	}
+}
+
+VTFResizeFilter StringToResizeFilter(const vlChar *cString)
+{
+	if(stricmp(cString, "POINT") == 0)
+	{
+		return RESIZE_FILTER_POINT;
+	}
+	else if(stricmp(cString, "BOX") == 0)
+	{
+		return RESIZE_FILTER_BOX;
+	}
+	else if(stricmp(cString, "TRIANGLE") == 0)
+	{
+		return RESIZE_FILTER_TRIANGLE;
+	}
+	else if(stricmp(cString, "SMALLEST") == 0)
+	{
+		return RESIZE_SMALLEST_POWER2;
+	}
+	else if(stricmp(cString, "KAISER") == 0)
+	{
+		return RESIZE_FILTER_KAISER;
+	}
+	else if(stricmp(cString, "MITCHELL") == 0)
+	{
+		return RESIZE_FILTER_MITCHELL;
+	}
+	else
+	{
+		return RESIZE_FILTER_COUNT;
 	}
 }

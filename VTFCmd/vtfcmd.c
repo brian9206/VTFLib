@@ -123,9 +123,8 @@ int main(int argc, char* argv[])
 	VTFResizeMethod ResizeMethod;		// Temp variable for string to VTFResizeMethod test.
 
 	VTFMipmapFilter MipmapFilter;		// Temp variable for string to VTFMipmapFilter test.
-	VTFSharpenFilter SharpenFilter;		// Temp variable for string to VTFSharpenFilter test.
+	VTFResizeFilter ResizeFilter;		// Temp variable for string to VTFResizeFilter test.
 
-	VTFKernelFilter KernelFilter;						// Temp variable for string to VTFKernelFilter test.
 	VTFHeightConversionMethod HeightConversionMethod;	// Temp variable for string to VTFHeightConversionMethod test.
 	VTFNormalAlphaResult NormalAlphaResult;				// Temp variable for string to VTFNormalAlphaResult test.
 
@@ -352,10 +351,10 @@ int main(int argc, char* argv[])
 			{
 				if(i + 1 < argc)
 				{
-					MipmapFilter = StringToMipmapFilter(argv[++i]);
-					if(MipmapFilter != MIPMAP_FILTER_COUNT)
+					ResizeFilter = StringToResizeFilter(argv[++i]);
+					if(ResizeFilter != RESIZE_FILTER_COUNT)
 					{
-						CreateOptions.ResizeFilter = MipmapFilter;
+						CreateOptions.ResizeFilter = ResizeFilter;
 					}
 					else
 					{
@@ -366,27 +365,6 @@ int main(int argc, char* argv[])
 				else
 				{
 					PrintUsage("-rfilter expects string argument.");
-					return 2;
-				}
-			}
-			else if(stricmp(argv[i], "-rsharpen") == 0)
-			{
-				if(i + 1 < argc)
-				{
-					SharpenFilter = StringToSharpenFilter(argv[++i]);
-					if(SharpenFilter != SHARPEN_FILTER_COUNT)
-					{
-						CreateOptions.ResizeSharpenFilter = SharpenFilter;
-					}
-					else
-					{
-						PrintUsage("Unknown rsharpen: %s.", argv[i]);
-						return 2;
-					}
-				}
-				else
-				{
-					PrintUsage("-rsharpen expects string argument.");
 					return 2;
 				}
 			}
@@ -487,51 +465,9 @@ int main(int argc, char* argv[])
 					return 2;
 				}
 			}
-			else if(stricmp(argv[i], "-msharpen") == 0)
-			{
-				if(i + 1 < argc)
-				{
-					SharpenFilter = StringToSharpenFilter(argv[++i]);
-					if(SharpenFilter != SHARPEN_FILTER_COUNT)
-					{
-						CreateOptions.MipmapSharpenFilter = SharpenFilter;
-					}
-					else
-					{
-						PrintUsage("Unknown msharpen: %s.", argv[i]);
-						return 2;
-					}
-				}
-				else
-				{
-					PrintUsage("-msharpen expects string argument.");
-					return 2;
-				}
-			}
 			else if(stricmp(argv[i], "-normal") == 0)
 			{
 				CreateOptions.bNormalMap = vlTrue;
-			}
-			else if(stricmp(argv[i], "-nkernel") == 0)
-			{
-				if(i + 1 < argc)
-				{
-					KernelFilter = StringToKernelFilter(argv[++i]);
-					if(KernelFilter != KERNEL_FILTER_COUNT)
-					{
-						CreateOptions.KernelFilter = KernelFilter;
-					}
-					else
-					{
-						PrintUsage("Unknown nkernel: %s.", argv[i]);
-						return 2;
-					}
-				}
-				else
-				{
-					PrintUsage("-nkernel expects string argument.");
-					return 2;
-				}
 			}
 			else if(stricmp(argv[i], "-nheight") == 0)
 			{
@@ -572,18 +508,6 @@ int main(int argc, char* argv[])
 				else
 				{
 					PrintUsage("-nalpha expects string argument.");
-					return 2;
-				}
-			}
-			else if(stricmp(argv[i], "-nscale") == 0)
-			{
-				if(i + 1 < argc && sscanf(argv[++i], "%f", &sTemp) == 1)
-				{
-					CreateOptions.sNormalScale = sTemp;
-				}
-				else
-				{
-					PrintUsage("-nscale expects single argument.");
 					return 2;
 				}
 			}
@@ -795,7 +719,6 @@ void PrintUsage(const vlChar *lpError, ...)
 	Print(" -resize                  (Resize the input to a power of 2.)\n");
 	Print(" -rmethod <string>        (Resize method to use.)\n");
 	Print(" -rfilter <string>        (Resize filter to use.)\n");
-	Print(" -rsharpen <string>       (Resize sharpen filter to use.)\n");
 	Print(" -rwidth <integer>        (Resize to specific width.)\n");
 	Print(" -rheight <integer>       (Resize to specific height.)\n");
 	Print(" -rclampwidth <integer>   (Maximum width to resize to.)\n");
@@ -804,12 +727,9 @@ void PrintUsage(const vlChar *lpError, ...)
 	Print(" -gcorrection <single>    (Gamma correction to use.)\n");
 	Print(" -nomipmaps               (Don't generate mipmaps.)\n");
 	Print(" -mfilter <string>        (Mipmap filter to use.)\n");
-	Print(" -msharpen <string>       (Mipmap sharpen filter to use.)\n");
 	Print(" -normal                  (Convert input file to normal map.)\n");
-	Print(" -nkernel <string>        (Normal map generation kernel to use.)\n");
 	Print(" -nheight <string>        (Normal map height calculation to use.)\n");
 	Print(" -nalpha <string>         (Normal map alpha result to set.)\n");
-	Print(" -nscale <single>         (Normal map scale to use.)\n");
 	Print(" -nwrap                   (Wrap the normal map for tiled textures.)\n");
 	Print(" -bumpscale <single>      (Engine bump mapping scale to use.)\n");
 	Print(" -nothumbnail             (Don't generate thumbnail image.)\n");
@@ -988,7 +908,7 @@ void ProcessFile(vlChar *lpInputFile)
 	Print("Processing %s...\n", lpInputFile);
 
 	lpTemp = strrchr(lpInputFile, '.');
-	
+
 	if(lpTemp == 0 || stricmp(lpTemp, ".vtf") != 0)
 	{
 		// Load input file.

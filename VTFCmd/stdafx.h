@@ -33,20 +33,9 @@
 #include <string.h>
 #include <stdarg.h>
 
-#include "..\lib\VTFLib.h"
-#ifdef _DEBUG
-#	ifdef _WIN64
-#		pragma comment(lib, "../VTFLib/x64/Debug/VTFLib.lib")
-#	else
-#		pragma comment(lib, "../VTFLib/Win32/Debug/VTFLib.lib")
-#	endif
-#else
-#	ifdef _WIN64
-#		pragma comment(lib, "../VTFLib/x64/Release/VTFLib.lib")
-#	else
-#		pragma comment(lib, "../VTFLib/Win32/Release/VTFLib.lib")
-#	endif
-#endif
+#include "VTFLib.h"
+
+#pragma comment(lib, "VTFLib.lib")
 
 #include "IL\il.h"
 #pragma comment(lib, "DevIL.lib")

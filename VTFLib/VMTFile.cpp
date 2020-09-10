@@ -58,22 +58,26 @@ vlBool CVMTFile::IsLoaded() const
 
 vlBool CVMTFile::Load(const vlChar *cFileName)
 {
-	return this->Load(&IO::Readers::CFileReader(cFileName));
+	IO::Readers::CFileReader reader( cFileName );
+	return this->Load(&reader);
 }
 
 vlBool CVMTFile::Load(const vlVoid *lpData, vlUInt uiBufferSize)
 {
-	return this->Load(&IO::Readers::CMemoryReader(lpData, uiBufferSize));
+	IO::Readers::CMemoryReader reader( lpData, uiBufferSize );
+	return this->Load(&reader);
 }
 
 vlBool CVMTFile::Load(vlVoid *pUserData)
 {
-	return this->Load(&IO::Readers::CProcReader(pUserData));
+	IO::Readers::CProcReader reader( pUserData );
+	return this->Load(&reader);
 }
 
 vlBool CVMTFile::Save(const vlChar *cFileName) const
 {
-	return this->Save(&IO::Writers::CFileWriter(cFileName));
+	IO::Writers::CFileWriter writer( cFileName );
+	return this->Save(&writer);
 }
 
 vlBool CVMTFile::Save(vlVoid *lpData, vlUInt uiBufferSize, vlUInt &uiSize) const
@@ -91,7 +95,8 @@ vlBool CVMTFile::Save(vlVoid *lpData, vlUInt uiBufferSize, vlUInt &uiSize) const
 
 vlBool CVMTFile::Save(vlVoid *pUserData) const
 {
-	return this->Save(&IO::Writers::CProcWriter(pUserData));
+	IO::Writers::CProcWriter writer( pUserData );
+	return this->Save(&writer);
 }
 
 enum EToken
@@ -105,7 +110,7 @@ enum EToken
 	TOKEN_CLOSE_BRACE,		// Token is a close brace (}).
 	TOKEN_CHAR,				// Token is a char (any char).  Use GetChar().
 	TOKEN_STRING,			// Token is a string.  Use GetString().
-	TOKEN_QUOTED_STRING,	
+	TOKEN_QUOTED_STRING,
 	TOKEN_SPECIAL			// Token is a specified special char.
 };
 
@@ -258,7 +263,7 @@ private:
 			this->NextToken = new CToken(cChar);
 			return;
 		}
-		
+
 		if(cChar == '\r' || cChar == '\n')
 		{
 			this->NextToken = new CToken(TOKEN_NEWLINE, cChar);
@@ -346,7 +351,7 @@ public:
 	vlVoid GetNextToken()
 	{
 		CToken *Token;
-		
+
 		Token = this->ByteTokenizer->Next();
 
 		// Consume all whitespace.
@@ -807,7 +812,7 @@ vlBool CVMTFile::Load(IO::Readers::IReader *Reader)
 						while(vlTrue)
 						{
 							CVMTNode *Node = this->Load(Reader, vlTrue);
-							
+
 							if(Node == 0)
 								break;
 

@@ -80,7 +80,7 @@ private:
 };
 struct OutputHandlerVtf : public nvtt::OutputHandler
 {
-	OutputHandlerVtf( CVTFFile* file, vlUInt frame, vlUInt face, vlUInt slice ) : file( file ), frame( frame ), face( face ), slice( slice )
+	OutputHandlerVtf( CVTFFile* file, vlUInt frame, vlUInt face, vlUInt slice, VTFImageFormat mipFmt ) : file( file ), frame( frame ), face( face ), slice( slice ), mipFmt( mipFmt )
 	{
 		currentMipLevel = -1;
 		currentOffset = 0;
@@ -92,12 +92,22 @@ struct OutputHandlerVtf : public nvtt::OutputHandler
 		currentOffset = 0;
 	}
 	bool writeData( const void* data, int size ) override
-		{
+	{
 		assert( currentMipLevel != -1 );
-		memcpy( file->GetData( frame, face, 0, currentMipLevel ) + currentOffset, data, size );
-		currentOffset += size;
-		return true;
+		if ( mipFmt == file->GetFormat() )
+		{
+			memcpy( file->GetData( frame, face, 0, currentMipLevel ) + currentOffset, data, size );
+			currentOffset += size;
 		}
+		else
+		{
+			int width = ( size / 4 );
+			CVTFFile::ConvertFromRGBA8888( (vlByte*)data, file->GetData( frame, face, 0, currentMipLevel ) + currentOffset, width, 1, file->GetFormat() );
+			currentOffset += CVTFFile::GetImageFormatInfo( file->GetFormat() ).uiBytesPerPixel * width;
+		}
+
+		return true;
+	}
 	void endImage() override
 	{
 	}
@@ -109,6 +119,7 @@ private:
 	const vlUInt slice;
 	int currentMipLevel;
 	int currentOffset;
+	VTFImageFormat mipFmt;
 };
 #endif
 
@@ -721,10 +732,6 @@ vlBool CVTFFile::Create(vlUInt uiWidth, vlUInt uiHeight, vlUInt uiFrames, vlUInt
 						inputOptions.setMipmapGeneration( true, this->Header->MipCount );
 						inputOptions.setMipmapFilter( static_cast<nvtt::MipmapFilter>( VTFCreateOptions.MipmapFilter ) );
 
-						nvtt::OutputOptions outputOptions;
-						OutputHandlerVtf outputHandler( this, i, j, k );
-						outputOptions.setOutputHeader( false );
-						outputOptions.setOutputHandler( &outputHandler );
 
 						nvtt::CompressionOptions compressionOptions;
 						compressionOptions.setTargetDecoder( nvtt::Decoder_D3D9 );
@@ -745,6 +752,7 @@ vlBool CVTFFile::Create(vlUInt uiWidth, vlUInt uiHeight, vlUInt uiFrames, vlUInt
 							break;
 						}
 
+						VTFImageFormat mipFormat = this->Header->ImageFormat;
 						switch ( this->Header->ImageFormat )
 						{
 						case IMAGE_FORMAT_DXT1:
@@ -761,8 +769,14 @@ vlBool CVTFFile::Create(vlUInt uiWidth, vlUInt uiHeight, vlUInt uiFrames, vlUInt
 							break;
 						default:
 							compressionOptions.setFormat( nvtt::Format_RGBA );
+							mipFormat = IMAGE_FORMAT_RGBA8888;
 							break;
 						}
+
+						nvtt::OutputOptions outputOptions;
+						OutputHandlerVtf outputHandler( this, i, j, k, mipFormat );
+						outputOptions.setOutputHeader( false );
+						outputOptions.setOutputHandler( &outputHandler );
 
 						nvtt::Compressor compressor;
 						if ( !compressor.process( inputOptions, compressionOptions, outputOptions ) )
@@ -2124,9 +2138,6 @@ vlBool CVTFFile::GenerateMipmaps(vlUInt uiFace, vlUInt uiFrame, VTFMipmapFilter 
 	inputOptions.setMipmapFilter( static_cast<nvtt::MipmapFilter>( MipmapFilter ) );
 
 	nvtt::OutputOptions outputOptions;
-	OutputHandlerVtf outputHandler( this, uiFrame, uiFace, 0 );
-	outputOptions.setOutputHeader( false );
-	outputOptions.setOutputHandler( &outputHandler );
 
 	nvtt::CompressionOptions compressionOptions;
 	compressionOptions.setTargetDecoder( nvtt::Decoder_D3D9 );
@@ -2147,6 +2158,7 @@ vlBool CVTFFile::GenerateMipmaps(vlUInt uiFace, vlUInt uiFrame, VTFMipmapFilter 
 		break;
 	}
 
+	VTFImageFormat mipFormat = this->Header->ImageFormat;
 	switch ( this->Header->ImageFormat )
 	{
 	case IMAGE_FORMAT_DXT1:
@@ -2163,8 +2175,12 @@ vlBool CVTFFile::GenerateMipmaps(vlUInt uiFace, vlUInt uiFrame, VTFMipmapFilter 
 		break;
 	default:
 		compressionOptions.setFormat( nvtt::Format_RGBA );
+		mipFormat = IMAGE_FORMAT_RGBA8888;
 		break;
 	}
+	OutputHandlerVtf outputHandler( this, uiFrame, uiFace, 0, mipFormat );
+	outputOptions.setOutputHeader( false );
+	outputOptions.setOutputHandler( &outputHandler );
 
 	nvtt::Compressor compressor;
 	return compressor.process( inputOptions, compressionOptions, outputOptions );

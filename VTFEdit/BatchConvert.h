@@ -296,7 +296,7 @@ namespace VTFEdit
 				| System::Windows::Forms::AnchorStyles::Right);
 			this->txtOutputFolder->Location = System::Drawing::Point(104, 40);
 			this->txtOutputFolder->Name = "txtOutputFolder";
-			this->txtOutputFolder->ReadOnly = true;
+			this->txtOutputFolder->ReadOnly = false;
 			this->txtOutputFolder->Size = System::Drawing::Size(216, 20);
 			this->txtOutputFolder->TabIndex = 4;
 			this->txtOutputFolder->Text = "";
@@ -328,7 +328,7 @@ namespace VTFEdit
 				| System::Windows::Forms::AnchorStyles::Right);
 			this->txtInputFolder->Location = System::Drawing::Point(104, 16);
 			this->txtInputFolder->Name = "txtInputFolder";
-			this->txtInputFolder->ReadOnly = true;
+			this->txtInputFolder->ReadOnly = false;
 			this->txtInputFolder->Size = System::Drawing::Size(216, 20);
 			this->txtInputFolder->TabIndex = 1;
 			this->txtInputFolder->Text = "";
@@ -630,7 +630,7 @@ namespace VTFEdit
 						}
 						else
 						{
-							this->Log(String::Concat("Error loading ", Files[j]->Name, "."), System::Drawing::Color::Red);
+							this->Log(String::Concat("Error loading ", Files[j]->Name, ". ", ilGetError()), System::Drawing::Color::Red);
 						}
 
 						System::Runtime::InteropServices::Marshal::FreeHGlobal((IntPtr)cFile);

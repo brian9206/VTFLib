@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\VTFEdit\VTFEdit.cpp" />
+    <ClCompile Include="..\..\VTFEdit\VTFOptions.cpp" />
+    <ClCompile Include="..\..\VTFEdit\WADConvert.cpp" />
+    <ClCompile Include="..\..\VTFEdit\About.cpp" />
+    <ClCompile Include="..\..\VTFEdit\BatchConvert.cpp" />
+    <ClCompile Include="..\..\VTFEdit\VMTCreate.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\VTFEdit\About.h" />
+    <ClInclude Include="..\..\VTFEdit\BatchConvert.h" />
+    <ClInclude Include="..\..\VTFEdit\DirectoryItemInfoManager.h" />
+    <ClInclude Include="..\..\VTFEdit\resource.h" />
+    <ClInclude Include="..\..\VTFEdit\stdafx.h" />
+    <ClInclude Include="..\..\VTFEdit\Utility.h" />
+    <ClInclude Include="..\..\VTFEdit\VMTCreate.h" />
+    <ClInclude Include="..\..\VTFEdit\VMTFileUtility.h" />
+    <ClInclude Include="..\..\VTFEdit\VTFEdit.h" />
+    <ClInclude Include="..\..\VTFEdit\VTFFileUtility.h" />
+    <ClInclude Include="..\..\VTFEdit\VTFOptions.h" />
+    <ClInclude Include="..\..\VTFEdit\WADConvert.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\VTFEdit\About.resX" />
+    <EmbeddedResource Include="..\..\VTFEdit\BatchConvert.resX" />
+    <EmbeddedResource Include="..\..\VTFEdit\VMTCreate.resX" />
+    <EmbeddedResource Include="..\..\VTFEdit\VTFEdit.resX" />
+    <EmbeddedResource Include="..\..\VTFEdit\VTFOptions.resx" />
+    <EmbeddedResource Include="..\..\VTFEdit\WADConvert.resX" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\VTFEdit\VTFEdit.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\VTFEdit\app.ico" />
+  </ItemGroup>
+</Project>
